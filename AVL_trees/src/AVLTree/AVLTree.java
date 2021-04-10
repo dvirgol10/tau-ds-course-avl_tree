@@ -35,12 +35,18 @@ public class AVLTree {
     private AVLNode maxNode;
 
     /**
+     * This constructor creates an empty AVLTree.
+     */
+    public AVLTree() {
+    }
+
+    /**
      * public AVLNode getVirtualNode()
      * <p>
      * Returns a virtual node.
      */
     public AVLNode getVirtualNode() {
-        return this.minNode;
+        return this.virtualNode;
     }
 
     /**
@@ -102,14 +108,14 @@ public class AVLTree {
         AVLNode node = this.getRoot();
         while (node.getKey() != k) {
             if (node.getKey() > k) {
-                if (node.getLeftChild().isRealNode()) {
-                    node = node.getLeftChild();
+                if (node.getLeft().isRealNode()) {
+                    node = node.getLeft();
                 } else {
                     break;
                 }
             } else {
-                if (node.getRightChild().isRealNode()) {
-                    node = node.getRightChild();
+                if (node.getRight().isRealNode()) {
+                    node = node.getRight();
                 } else {
                     break;
                 }
@@ -161,11 +167,11 @@ public class AVLTree {
         }
 
         AVLNode lastUpdatedNode = this.balanceTreeOnce(node.getParent());
-        if (lastUpdatedNode.isRealNode()){
-            this.balanceTreeOnce(lastUpdatedNode);
-            return 1;
+        if (lastUpdatedNode.isRealNode()) { // in other words, if a rotation has been performed,
+            this.balanceTreeOnce(lastUpdatedNode); // continue to update nodes in the path from the inserted node to the root
+            return 2;
         }
-        return 2;
+        return 1;
     }
 
     /**
@@ -175,7 +181,7 @@ public class AVLTree {
      * and update tree's min node if needed.
      */
     private void updateRelationsForNewLeftChild(AVLNode parent, AVLNode newNode) {
-        parent.setLeftChild(newNode);
+        parent.setLeft(newNode);
         if (this.getMin() == parent) {
             this.setMin(newNode);
         } else {
@@ -191,7 +197,7 @@ public class AVLTree {
      * and update tree's max node if needed.
      */
     private void updateRelationsForNewRightChild(AVLNode parent, AVLNode newNode) {
-        parent.setRightChild(newNode);
+        parent.setRight(newNode);
         if (this.getMax() == parent) {
             this.setMax(newNode);
         } else {
@@ -215,14 +221,17 @@ public class AVLTree {
      * <p>
      * updates the fields of all the nodes from the bottom of the tree until the first rotation,
      * or until it reaches the root if no rotation has been performed.
+     * Returns the root if and only if the tree is balanced
+     * and all the nodes are up to date.
      */
     private AVLNode balanceTreeOnce(AVLNode node) {
-        while (node.isRealNode()) {
+        while (node.isRealNode()) { // iterating up through the tree to the first unbalanced element, if the tree is balanced we exit the loop and return the root
             node.updateNodeFields();
             if (this.isUnbalanced(node)) {
                 this.balanceNode(node);
-                return node.getParent();
+                return node;
             }
+            node = node.getParent();
         }
         return this.getVirtualNode();
     }
@@ -234,15 +243,15 @@ public class AVLTree {
      */
     private void balanceNode(AVLNode node) {
         if (node.getBalanceFactor() == 2) {
-            if (node.getLeftChild().getBalanceFactor() == -1) {
+            if (node.getLeft().getBalanceFactor() == -1) {
                 this.rotateLeftThenRight(node);
-            } else if (node.getLeftChild().getBalanceFactor() == 1 || node.getLeftChild().getBalanceFactor() == 0) {
+            } else if (node.getLeft().getBalanceFactor() == 1 || node.getLeft().getBalanceFactor() == 0) {
                 this.rotateRight(node);
             }
         } else if (node.getBalanceFactor() == -2) {
-            if (node.getRightChild().getBalanceFactor() == -1 || node.getRightChild().getBalanceFactor() == 0) {
+            if (node.getRight().getBalanceFactor() == -1 || node.getRight().getBalanceFactor() == 0) {
                 this.rotateLeft(node);
-            } else if (node.getRightChild().getBalanceFactor() == 1) {
+            } else if (node.getRight().getBalanceFactor() == 1) {
                 this.rotateRightThenLeft(node);
             }
         }
@@ -263,10 +272,10 @@ public class AVLTree {
      * Rotates the tree right from the given node making it the right child of its pre left child
      */
     private void rotateRight(AVLNode node) {
-        AVLNode leftChild = node.getLeftChild();
-        node.setLeftChild(leftChild.getRightChild());
+        AVLNode leftChild = node.getLeft();
+        node.setLeft(leftChild.getRight());
         leftChild.setParent(node.getParent());
-        leftChild.setRightChild(node);
+        leftChild.setRight(node);
         node.setParent(leftChild);
 
         node.updateNodeFields();
@@ -282,10 +291,10 @@ public class AVLTree {
      * Rotates the subtree left from the given node making it the left child of its pre right child
      */
     private void rotateLeft(AVLNode node) {
-        AVLNode rightChild = node.getRightChild();
-        node.setRightChild(rightChild.getLeftChild());
+        AVLNode rightChild = node.getRight();
+        node.setRight(rightChild.getLeft());
         rightChild.setParent(node.getParent());
-        rightChild.setLeftChild(node);
+        rightChild.setLeft(node);
         node.setParent(rightChild);
 
         node.updateNodeFields();
@@ -301,7 +310,7 @@ public class AVLTree {
      * Rotates the tree left from the given node's left child and the rotates right from the node
      */
     private void rotateLeftThenRight(AVLNode node) {
-        rotateLeft(node.getLeftChild());
+        rotateLeft(node.getLeft());
         rotateRight(node);
     }
 
@@ -311,7 +320,7 @@ public class AVLTree {
      * Rotates the tree right from the given node's right child and the rotates left from the node
      */
     private void rotateRightThenLeft(AVLNode node) {
-        rotateRight(node.getRightChild());
+        rotateRight(node.getRight());
         rotateLeft(node);
     }
 
@@ -324,8 +333,105 @@ public class AVLTree {
      * returns -1 if an item with key k was not found in the tree.
      */
     public int delete(int k) {
-        return 42;    // to be replaced by student code
+        if (this.empty()) {
+            return -1;
+        }
+        AVLNode node = searchNode(k);
+        if (node.getKey() != k) {
+            return -1;
+        }
+
+        if (this.getRoot() == node && node.getChildCount() == 0) { // the root is the only node in the tree
+            this.setRoot(null);
+            this.setMin(null);
+            this.setMax(null);
+            return 1;
+        } else if (this.getMin() == node) { // the node to delete is the min element
+            this.setMin(node.getSuccessor());
+            node.getSuccessor().setPredecessor(node.getPredecessor());
+            if (this.getRoot() != node) { // root is the min element
+                node.getParent().setLeft(node.getRight());
+            } else { // min element is not the root
+                this.setRoot(node.getRight());
+                this.getRoot().setParent(this.getVirtualNode());
+            }
+
+        } else if (this.getMax() == node) { // the node to delete is the max element
+            this.setMax(node.getPredecessor());
+            node.getPredecessor().setSuccessor(node.getSuccessor());
+            if (this.getRoot() != node) { // root is the max element
+                node.getParent().setRight(node.getLeft());
+            } else { // max element is not the root
+                this.setRoot(node.getLeft());
+                this.getRoot().setParent(this.getVirtualNode());
+            }
+        } else if (node.getChildCount() == 1) {
+            updateSuccessor(node.getPredecessor(), node.getSuccessor());
+            if (node.getLeft().isRealNode()) { // the left child is the only child of the node
+                if (node.isLeftChild()) { // the node is the left child of his parent
+                    node.getParent().setLeft(node.getLeft());
+                } else { // the node is the right child of his parent
+                    node.getParent().setRight(node.getLeft());
+                }
+                node.getLeft().setParent(node.getParent());
+            } else { // the right child is the only child of the node
+                if (node.isLeftChild()) { // the node is the left child of his parent
+                    node.getParent().setLeft(node.getRight());
+                } else { // the node is the right child of his parent
+                    node.getParent().setRight(node.getRight());
+                }
+                node.getRight().setParent(node.getParent());
+            }
+
+        } else if (node.getChildCount() == 2) { // the node has two children, so replaces it with his successor
+            updateSuccessor(node.getPredecessor(), node.getSuccessor());
+            AVLNode succ = node.getSuccessor();
+            AVLNode parentOfRemovedSuccessor = succ.getParent();
+            if (succ.isLeftChild()) {
+                succ.getParent().setLeft(succ.getRight());
+            } else {
+                succ.getParent().setRight(succ.getRight());
+            }
+            succ.setParent(node.getParent());
+            if (node.isLeftChild()) {
+                node.getParent().setLeft(succ);
+            } else {
+                node.getParent().setRight(succ);
+            }
+
+            succ.setRight(node.getRight());
+            node.getRight().setParent(succ);
+
+            succ.setLeft(node.getLeft());
+            node.getLeft().setParent(succ);
+
+            if (this.getRoot() == node){ // if the node is the root
+                this.setRoot(succ);
+            }
+
+            return balanceTree(parentOfRemovedSuccessor);  //TODO check if we need to add 1 for the swap with the successor of node
+        } else { // A leaf which is nor the min or the max element
+            updateSuccessor(node.getPredecessor(), node.getSuccessor());
+            if (node.isLeftChild()) {
+                node.getParent().setLeft(this.getVirtualNode());
+            } else {
+                node.getParent().setRight(this.getVirtualNode());
+            }
+        }
+        AVLNode replacingNode = (node.isLeftChild() ? node.getParent().getLeft() : node.getParent().getRight());
+        return balanceTree(replacingNode);
     }
+
+    private int balanceTree(AVLNode node) {
+        int rebalancingOperationsCounter = 0;
+        AVLNode lastUpdatedNode = node;
+        while (lastUpdatedNode.isRealNode()) {
+            lastUpdatedNode = this.balanceTreeOnce(lastUpdatedNode);
+            rebalancingOperationsCounter += 1;
+        }
+        return rebalancingOperationsCounter;
+    }
+
 
     /**
      * public Boolean min()
@@ -370,9 +476,9 @@ public class AVLTree {
      */
     public void inOrder(AVLNode node, int index, AVLNode[] arr) {
         if (node.isRealNode()) {
-            inOrder(node.getLeftChild(), index, arr);
-            arr[index + node.getLeftChild().getSize()] = node;
-            inOrder(node.getRightChild(), index + node.getLeftChild().getSize() + 1, arr);
+            inOrder(node.getLeft(), index, arr);
+            arr[index + node.getLeft().getSize()] = node;
+            inOrder(node.getRight(), index + node.getLeft().getSize() + 1, arr);
         }
     }
 
@@ -451,14 +557,14 @@ public class AVLTree {
         boolean xorValue = false;
         while (node.getKey() != k) {
             if (node.getKey() > k) {
-                node = node.getLeftChild();
+                node = node.getLeft();
             } else {
                 xorValue ^= node.getValue();
-                xorValue ^= node.getLeftChild().getSubTreeXor();
-                node = node.getRightChild();
+                xorValue ^= node.getLeft().getSubTreeXor();
+                node = node.getRight();
             }
         }
-        return xorValue ^ node.getValue() ^ node.getLeftChild().getSubTreeXor();
+        return xorValue ^ node.getValue() ^ node.getLeft().getSubTreeXor();
     }
 
     /**
@@ -545,22 +651,22 @@ public class AVLTree {
         }
 
         //sets left child
-        public void setLeftChild(AVLNode node) {
+        public void setLeft(AVLNode node) {
             this.left = node;
         }
 
         //returns left child (if there is no left child return null)
-        public AVLNode getLeftChild() {
+        public AVLNode getLeft() {
             return this.left;
         }
 
         //sets right child
-        public void setRightChild(AVLNode node) {
+        public void setRight(AVLNode node) {
             this.right = node;
         }
 
         //returns right child (if there is no right child return null)
-        public AVLNode getRightChild() {
+        public AVLNode getRight() {
             return this.right;
         }
 
@@ -611,7 +717,7 @@ public class AVLTree {
 
         //returns the balance factor of the node, if it is a virtual node return 0
         public int getBalanceFactor() {
-            return isRealNode() ? this.getLeftChild().getHeight() - this.getRightChild().getHeight() : 0;
+            return isRealNode() ? this.getLeft().getHeight() - this.getRight().getHeight() : 0;
         }
 
         //returns the successor of the node in the tree (or null if successor doesn't exist)
@@ -636,11 +742,28 @@ public class AVLTree {
 
         //updates height, size and xor fields of the node
         public void updateNodeFields() {
-            AVLNode leftChild = this.getLeftChild();
-            AVLNode rightChild = this.getRightChild();
+            AVLNode leftChild = this.getLeft();
+            AVLNode rightChild = this.getRight();
             this.setHeight((leftChild.getHeight() > rightChild.getHeight() ? leftChild.getHeight() : rightChild.getHeight()) + 1);
             this.setSize(leftChild.getSize() + rightChild.getSize() + 1);
             this.setSubTreeXor(leftChild.getSubTreeXor() ^ rightChild.getSubTreeXor() ^ this.getValue());
+        }
+
+        //returns the number of the children of the node
+        public int getChildCount() {
+            int count = 0;
+            if (this.getLeft().isRealNode()) {
+                count += 1;
+            }
+            if (this.getRight().isRealNode()) {
+                count += 1;
+            }
+            return count;
+        }
+
+        //returns true if and only if the node is the left child of his parent
+        public boolean isLeftChild() {
+            return this.getKey() < this.getParent().getKey();
         }
     }
 }
