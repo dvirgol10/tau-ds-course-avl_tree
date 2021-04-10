@@ -1,3 +1,5 @@
+package AVLTree; //TODO remove in the submitted file
+
 /**
  * public class AVLNode
  * <p>
@@ -167,61 +169,113 @@ public class AVLTree {
      * However, you are allowed (and required) to implement the given functions, and can add functions of your own
      * according to your needs.
      */
-    public class AVLNode {
+    public static class AVLNode { //TODO check not static
+        int key;
+        boolean info;
+        int height;
+        AVLNode parent;
+        AVLNode left;
+        AVLNode right;
+        int subTreeSize;
+        boolean subTreeXor;
+
+        static AVLNode virtualNode = new AVLNode();
+
+        public AVLNode() {
+            this.key = -1;
+            this.subTreeSize = 0;
+            this.subTreeXor = false;
+        }
+
+        public AVLNode(int key, boolean info, AVLNode parent) {
+            this.key = key;
+            this.info = info;
+            this.height = 0;
+            this.parent = parent;
+            this.subTreeSize = 1;
+            this.subTreeXor = info;
+            this.left = virtualNode;
+            this.right = virtualNode;
+        }
 
         //returns node's key (for virtual node return -1)
         public int getKey() {
-            return 42; // to be replaced by student code
+            return key;
         }
 
         //returns node's value [info] (for virtual node return null)
         public boolean getValue() {
-            return false; // to be replaced by student code
+            return info;
         }
 
         //sets left child
         public void setLeft(AVLNode node) {
-            return; // to be replaced by student code
+            this.left = node;
         }
 
         //returns left child (if there is no left child return null)
         public AVLNode getLeft() {
-            return null; // to be replaced by student code
+            return this.left;
         }
 
         //sets right child
         public void setRight(AVLNode node) {
-            return; // to be replaced by student code
+            this.right = node;
         }
 
         //returns right child (if there is no right child return null)
         public AVLNode getRight() {
-            return null; // to be replaced by student code
+            return this.right;
         }
 
         //sets parent
         public void setParent(AVLNode node) {
-            return; // to be replaced by student code
+            this.parent = node;
         }
 
         //returns the parent (if there is no parent return null)
         public AVLNode getParent() {
-            return null; // to be replaced by student code
+            return this.parent;
         }
 
-        // Returns True if this is a non-virtual AVL node
+        //returns True if this is a non-virtual AVL node
         public boolean isRealNode() {
-            return true; // to be replaced by student code
+            return this.key != -1;
         }
 
-        // sets the height of the node
+        //sets the height of the node
         public void setHeight(int height) {
-            return; // to be replaced by student code
+            this.height = height;
         }
 
-        // Returns the height of the node (-1 for virtual nodes)
+        //returns the height of the node (-1 for virtual nodes)
         public int getHeight() {
-            return 42; // to be replaced by student code
+            return this.height;
+        }
+
+        //returns the size of the node (0 for virtual nodes)
+        public int getSize() {
+            return this.subTreeSize;
+        }
+
+        //sets the size of the node
+        public void setSize(int size) {
+            this.subTreeSize = size;
+        }
+
+        //returns the xor of the node (false for virtual nodes)
+        public boolean getXor() {
+            return this.subTreeXor;
+        }
+
+        //returns the size of the node (0 for virtual nodes)
+        public void setXor(boolean xor) {
+            this.subTreeXor = xor;
+        }
+
+        //returns the balance factor of the node
+        public int getBalanceFactor() {
+            return this.getLeft().getHeight() - this.getRight().getHeight();
         }
     }
 
