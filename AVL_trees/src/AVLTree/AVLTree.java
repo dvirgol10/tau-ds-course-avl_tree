@@ -166,7 +166,7 @@ public class AVLTree {
             updateRelationsForNewRightChild(node, newNode);
         }
 
-        AVLNode lastUpdatedNode = this.balanceTreeOnce(node.getParent());
+        AVLNode lastUpdatedNode = this.balanceTreeOnce(node);
         if (lastUpdatedNode.isRealNode()) { // in other words, if a rotation has been performed,
             this.balanceTreeOnce(lastUpdatedNode); // continue to update nodes in the path from the inserted node to the root
             return 2;
@@ -277,6 +277,8 @@ public class AVLTree {
         leftChild.setParent(node.getParent());
         leftChild.setRight(node);
         node.setParent(leftChild);
+        leftChild.getParent().setLeft(leftChild);
+
 
         node.updateNodeFields();
         leftChild.updateNodeFields();
@@ -296,6 +298,8 @@ public class AVLTree {
         rightChild.setParent(node.getParent());
         rightChild.setLeft(node);
         node.setParent(rightChild);
+        rightChild.getParent().setRight(rightChild);
+
 
         node.updateNodeFields();
         rightChild.updateNodeFields();
@@ -386,7 +390,7 @@ public class AVLTree {
         } else if (node.getChildCount() == 2) { // the node has two children, so replaces it with his successor
             updateSuccessor(node.getPredecessor(), node.getSuccessor());
             AVLNode succ = node.getSuccessor();
-            AVLNode parentOfRemovedSuccessor = succ.getParent();
+            AVLNode parentOfRemovedSuccessor = succ.getParent() == node ? succ : succ.getParent();
             if (succ.isLeftChild()) {
                 succ.getParent().setLeft(succ.getRight());
             } else {
@@ -507,7 +511,7 @@ public class AVLTree {
      * or an empty array if the tree is empty.
      */
     public boolean[] infoToArray() {
-        boolean[] arr = new boolean[42];
+        boolean[] arr = new boolean[this.size()];
         if (!this.empty()) {
             AVLNode[] nodesArr = nodesToArray();
             for (int i = 0; i < arr.length; i++) {
@@ -627,6 +631,7 @@ public class AVLTree {
             this.info = false;
             this.subTreeSize = 0;
             this.subTreeXor = false;
+            this.height = -1;
         }
 
         public AVLNode(int key, boolean info, AVLNode parent) {
