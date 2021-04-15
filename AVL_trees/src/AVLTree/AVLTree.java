@@ -279,12 +279,12 @@ public class AVLTree {
     }
 
     private void rotateInDir(AVLNode node, Direction dir) {
-        AVLNode child = node.getChildDir(dir);
-        node.setChildDir(child.getChildDir(dir.reverseDir()), dir);
+        AVLNode child = node.getChildDir(dir.reverseDir());
+        node.setChildDir(child.getChildDir(dir), dir.reverseDir());
         child.setParent(node.getParent());
-        child.setChildDir(node, dir.reverseDir());
+        child.setChildDir(node, dir);
         node.setParent(child);
-        child.getParent().setChildDir(child, dir);
+        child.getParent().setChildDir(child, dir.reverseDir());
 
 
         node.updateNodeFields();
