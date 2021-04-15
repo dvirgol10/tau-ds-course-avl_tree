@@ -588,7 +588,7 @@ public class AVLTree {
      * @return the successor of 'node' if exists, null otherwise
      */
     public AVLNode successor(AVLNode node) {
-        return node.getSuccessor();
+        return node.getSuccessor().isRealNode() ? node.getSuccessor() : null;
     }
 
     /**
