@@ -378,21 +378,12 @@ public class AVLTree {
             if the node at question has only one child we can bypass it by replacing it with it's only child
              */
             updateSuccessor(node.getPredecessor(), node.getSuccessor());
-            if (node.getLeft().isRealNode()) { // the left child is the only child of the node
-                if (node.isLeftChild()) { // the node is the left child of his parent
-                    node.getParent().setLeft(node.getLeft());
-                } else { // the node is the right child of his parent
-                    node.getParent().setRight(node.getLeft());
-                }
-                node.getLeft().setParent(node.getParent());
-            } else { // the right child is the only child of the node
-                if (node.isLeftChild()) { // the node is the left child of his parent
-                    node.getParent().setLeft(node.getRight());
-                } else { // the node is the right child of his parent
-                    node.getParent().setRight(node.getRight());
-                }
-                node.getRight().setParent(node.getParent());
-            }
+
+            AVLNode child = node.getChildDir((node.getLeft().isRealNode() ? Direction.Left : Direction.Right));
+
+            node.getParent().setChildDir(child, (node.isLeftChild() ? Direction.Left : Direction.Right));
+
+            child.setParent(node.getParent());
 
         } else if (node.getChildCount() == 2) {
             /*
