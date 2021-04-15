@@ -22,7 +22,7 @@ public class AVLTree {
             }
             return Left;
         }
-    };
+    }
 
 
     /**
@@ -381,7 +381,7 @@ public class AVLTree {
 
             AVLNode child = node.getChildDir((node.getLeft().isRealNode() ? Direction.Left : Direction.Right));
 
-            node.getParent().setChildDir(child, (node.isLeftChild() ? Direction.Left : Direction.Right));
+            node.getParent().setChildDir(child, getDirectionFromParent(node));
 
             child.setParent(node.getParent());
 
@@ -396,23 +396,13 @@ public class AVLTree {
             updateSuccessor(node.getPredecessor(), node.getSuccessor());
             AVLNode succ = node.getSuccessor();
             AVLNode nodeToBeBalancedFrom = succ.getParent() == node ? succ : succ.getParent(); // addressing the 2 cases
-            if (succ.isLeftChild()) { // the first part of the bypass
-                succ.getParent().setLeft(succ.getRight());
-            } else {
-                succ.getParent().setRight(succ.getRight());
-            }
+
+            succ.getParent().setChildDir(succ.getRight(), getDirectionFromParent(succ)); // the first part of the bypass
+
             succ.setParent(node.getParent()); // the second part of the bypass
-            if (node.isLeftChild()) {
-                node.getParent().setLeft(succ);
-            } else {
-                node.getParent().setRight(succ);
-            }
+            node.getParent().setChildDir(succ, getDirectionFromParent(node));
 
-            succ.setRight(node.getRight());
-            node.getRight().setParent(succ);
-
-            succ.setLeft(node.getLeft());
-            node.getLeft().setParent(succ);
+            replaceChildren(node, succ);
 
             if (this.getRoot() == node){ // if the node is the root, the new root will be his successor
                 this.setRoot(succ);
@@ -421,11 +411,8 @@ public class AVLTree {
             return balanceTree(nodeToBeBalancedFrom);  //TODO check if we need to add 1 for the swap with the successor of node
         } else { // a leaf which is neither the min nor the max element
             updateSuccessor(node.getPredecessor(), node.getSuccessor());
-            if (node.isLeftChild()) {
-                node.getParent().setLeft(this.getVirtualNode());
-            } else {
-                node.getParent().setRight(this.getVirtualNode());
-            }
+
+            node.getParent().setChildDir(this.getVirtualNode(), getDirectionFromParent(node));
         }
         /*
         if the case of deletion isn't replacement the node with his successor,
@@ -434,6 +421,18 @@ public class AVLTree {
          */
         AVLNode replacingNode = (node.isLeftChild() ? node.getParent().getLeft() : node.getParent().getRight());
         return balanceTree(replacingNode);
+    }
+
+    private void replaceChildren(AVLNode oldParent, AVLNode newParent) {
+        newParent.setRight(oldParent.getRight());
+        oldParent.getRight().setParent(newParent);
+
+        newParent.setLeft(oldParent.getLeft());
+        oldParent.getLeft().setParent(newParent);
+    }
+
+    private Direction getDirectionFromParent(AVLNode node) {
+        return node.isLeftChild() ? Direction.Left : Direction.Right;
     }
 
     private int balanceTree(AVLNode node) { // TODO check the counter
