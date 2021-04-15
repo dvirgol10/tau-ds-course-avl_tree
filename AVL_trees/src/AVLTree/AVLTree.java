@@ -50,12 +50,39 @@ public class AVLTree {
     }
 
     /**
+     * public int getRoot()
+     * <p>
+     * Returns the root AVL node, or null if the tree is empty
+     */
+    public AVLNode getRoot() {
+        return this.root;
+    }
+
+    /**
+     * public int getRoot()
+     * <p>
+     * Sets the root AVL node.
+     */
+    public void setRoot(AVLNode root) {
+        this.root = root;
+    }
+
+    /**
      * public boolean empty()
      * <p>
      * Returns true if and only if the tree is empty
      */
     public boolean empty() {
         return this.getRoot() == null;
+    }
+
+    /**
+     * public int size()
+     * <p>
+     * Returns the number of nodes in the tree.
+     */
+    public int size() {
+        return this.empty() ? 0 : this.getRoot().getSize();
     }
 
     /**
@@ -423,7 +450,7 @@ public class AVLTree {
                 this.setRoot(succ);
             }
 
-            return balanceTree(nodeToBeBalancedFrom);  //TODO check if we need to add 1 for the swap with the successor of node
+            return balanceTree(nodeToBeBalancedFrom);  //TODO we don't need to add 1 for the swap with the successor of node
         } else { // a leaf which is neither the min nor the max element
             updateSuccessor(node.getPredecessor(), node.getSuccessor());
             if (node.isLeftChild()) {
@@ -473,6 +500,20 @@ public class AVLTree {
     }
 
     /**
+     * public void inOrder(AVLNode node, int offset, AVLNode[] arr)
+     * <p>
+     * Auxiliary recursive function of nodesToArray(),
+     * performs in-order tree walk while adding the node to the array.
+     */
+    public void inOrder(AVLNode node, int offset, AVLNode[] arr) {
+        if (node.isRealNode()) {
+            inOrder(node.getLeft(), offset, arr);
+            arr[offset + node.getLeft().getSize()] = node; // assigns the node in the right position in the in-order array
+            inOrder(node.getRight(), offset + node.getLeft().getSize() + 1, arr);
+        }
+    }
+
+    /**
      * public AVLNode[] nodesToArray()
      * <p>
      * Returns an array which contains all nodes in the tree,
@@ -485,20 +526,6 @@ public class AVLTree {
             inOrder(this.getRoot(), 0, arr);
         }
         return arr;
-    }
-
-    /**
-     * public void inOrder(AVLNode node, int offset, AVLNode[] arr)
-     * <p>
-     * Auxiliary recursive function of nodesToArray(),
-     * performs in-order tree walk while adding the node to the array.
-     */
-    public void inOrder(AVLNode node, int offset, AVLNode[] arr) {
-        if (node.isRealNode()) {
-            inOrder(node.getLeft(), offset, arr);
-            arr[offset + node.getLeft().getSize()] = node; // assigns the node in the right position in the in-order array
-            inOrder(node.getRight(), offset + node.getLeft().getSize() + 1, arr);
-        }
     }
 
     /**
@@ -534,33 +561,6 @@ public class AVLTree {
             }
         }
         return arr;
-    }
-
-    /**
-     * public int size()
-     * <p>
-     * Returns the number of nodes in the tree.
-     */
-    public int size() {
-        return this.empty() ? 0 : this.getRoot().getSize();
-    }
-
-    /**
-     * public int getRoot()
-     * <p>
-     * Returns the root AVL node, or null if the tree is empty
-     */
-    public AVLNode getRoot() {
-        return this.root;
-    }
-
-    /**
-     * public int getRoot()
-     * <p>
-     * Sets the root AVL node.
-     */
-    public void setRoot(AVLNode root) {
-        this.root = root;
     }
 
     /**
@@ -610,7 +610,7 @@ public class AVLTree {
     public boolean succPrefixXor(int k) {
         AVLNode node = this.getMin(); // starting from the minimum-key node
         boolean xorValue = false;
-        while (node.getKey() <= k) { // sequentially advances to each node successor until we reach the node with key k
+        while (node != null != node.isRealNode() || node.getKey() <= k) { // sequentially advances to each node successor until we reach the node with key k
             xorValue ^= node.getValue();
             node = successor(node);
         }
@@ -662,17 +662,19 @@ public class AVLTree {
 
         //returns node's key (for virtual node return -1)
         public int getKey() {
-            return key;
+            return this.key;
         }
 
         //returns node's value [info] (for virtual node return null)
-        public boolean getValue() {
-            return info;
+        public Boolean getValue() {
+            return this.isRealNode() ? this.info : null;
         }
 
         //sets left child
         public void setLeft(AVLNode node) {
-            if (this.isRealNode()) this.left = node;
+            if (this.isRealNode()){
+                this.left = node;
+            }
         }
 
         //returns left child (if there is no left child return null)
@@ -682,7 +684,9 @@ public class AVLTree {
 
         //sets right child
         public void setRight(AVLNode node) {
-            if (this.isRealNode()) this.right = node;
+            if (this.isRealNode()) {
+                this.right = node;
+            }
         }
 
         //returns right child (if there is no right child return null)
@@ -692,7 +696,9 @@ public class AVLTree {
 
         //sets parent
         public void setParent(AVLNode node) {
-            if (this.isRealNode()) this.parent = node;
+            if (this.isRealNode()) {
+                this.parent = node;
+            }
         }
 
         //returns the parent (if there is no parent return null)
@@ -715,19 +721,14 @@ public class AVLTree {
             return this.height;
         }
 
-        //returns the size of the node (0 for virtual nodes)
-        public int getSize() {
-            return this.subTreeSize;
-        }
-
         //sets the size of the node
         public void setSize(int size) {
             this.subTreeSize = size;
         }
 
-        //returns the xor of the node (false for virtual nodes)
-        public boolean getSubTreeXor() {
-            return this.subTreeXor;
+        //returns the size of the node (0 for virtual nodes)
+        public int getSize() {
+            return this.subTreeSize;
         }
 
         //returns the size of the node (0 for virtual nodes)
@@ -735,14 +736,9 @@ public class AVLTree {
             this.subTreeXor = xor;
         }
 
-        //returns the balance factor of the node, if it is a virtual node return 0
-        public int getBalanceFactor() {
-            return isRealNode() ? this.getLeft().getHeight() - this.getRight().getHeight() : 0;
-        }
-
-        //returns the successor of the node in the tree (or null if successor doesn't exist)
-        public AVLNode getSuccessor() {
-            return this.successor;
+        //returns the xor of the node (false for virtual nodes)
+        public boolean getSubTreeXor() {
+            return this.subTreeXor;
         }
 
         //sets the successor of the node in the tree
@@ -750,9 +746,9 @@ public class AVLTree {
             this.successor = successor;
         }
 
-        //returns the predecessor of the node in the tree (or null if successor doesn't exist)
-        public AVLNode getPredecessor() {
-            return this.predecessor;
+        //returns the successor of the node in the tree (or null if successor doesn't exist)
+        public AVLNode getSuccessor() {
+            return this.successor;
         }
 
         //sets the predecessor of the node in the tree
@@ -760,20 +756,23 @@ public class AVLTree {
             this.predecessor = predecessor;
         }
 
+        //returns the predecessor of the node in the tree (or null if successor doesn't exist)
+        public AVLNode getPredecessor() {
+            return this.predecessor;
+        }
+
+        //returns the balance factor of the node, if it is a virtual node return 0
+        public int getBalanceFactor() {
+            return this.isRealNode() ? this.getLeft().getHeight() - this.getRight().getHeight() : 0;
+        }
+
         //updates height, size and xor fields of the node
         public void updateNodeFields() {
             AVLNode leftChild = this.getLeft();
             AVLNode rightChild = this.getRight();
-            this.setHeight(max(leftChild.getHeight(), rightChild.getHeight()) + 1); // updates the height by the maximum height of the children
+            this.setHeight((leftChild.getHeight() > rightChild.getHeight() ? leftChild.getHeight() : rightChild.getHeight()) + 1); // updates the height by the maximum height of the children
             this.setSize(leftChild.getSize() + rightChild.getSize() + 1); // updates the size by the size of the children
             this.setSubTreeXor(leftChild.getSubTreeXor() ^ rightChild.getSubTreeXor() ^ this.getValue()); // updates the xor by the xor of the children
-        }
-
-        private int max(int a, int b) {
-            if (a > b) {
-                return a;
-            }
-            return b;
         }
 
         //returns the number of the children of the node
