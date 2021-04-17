@@ -279,12 +279,13 @@ public class AVLTree {
     }
 
     private void rotateInDir(AVLNode node, Direction dir) {
+        Direction nodesPreviousDirection = getDirectionFromParent(node);
         AVLNode child = node.getChildDir(dir.reverseDir());
         node.setChildDir(child.getChildDir(dir), dir.reverseDir());
         child.setParent(node.getParent());
         child.setChildDir(node, dir);
         node.setParent(child);
-        child.getParent().setChildDir(child, dir.reverseDir());
+        child.getParent().setChildDir(child, nodesPreviousDirection);
 
 
         node.updateNodeFields();
@@ -419,6 +420,7 @@ public class AVLTree {
         The balance operation also updates the fields of the nodes and counts the number of the rotations.
          */
         AVLNode replacingNode = (node.isLeftChild() ? node.getParent().getLeft() : node.getParent().getRight());
+        replacingNode = (replacingNode.isRealNode() ? replacingNode : node.getParent()); // TODO revisit the bug
         return balanceTree(replacingNode);
     }
 
@@ -603,11 +605,11 @@ public class AVLTree {
     public boolean succPrefixXor(int k) {
         AVLNode node = this.getMin(); // starting from the minimum-key node
         boolean xorValue = false;
-        while (node.getKey() <= k) { // sequentially advances to each node successor until we reach the node with key k
+        while (node.getKey() < k) { // sequentially advances to each node successor until we reach the node with key k
             xorValue ^= node.getValue();
             node = successor(node);
         }
-        return xorValue;
+        return xorValue ^ node.getValue();
     }
 
 
@@ -653,6 +655,15 @@ public class AVLTree {
             this.right = getVirtualNode();
             this.successor = getVirtualNode();
             this.predecessor = getVirtualNode();
+        }
+
+
+        @Override
+        public String toString() {
+            return "AVLNode{" +
+                    "key=" + key +
+                    ", info=" + info +
+                    '}';
         }
 
         //returns node's key (for virtual node return -1)
@@ -810,6 +821,95 @@ public class AVLTree {
             }
             this.setRight(child);
         }
+    }
+
+
+
+
+
+
+
+
+
+
+    public void printTree() {
+        String[] visual = treeRepresentation(root);
+        for (String s : visual) {
+            System.out.println(s);
+        }
+    }
+
+    private static String[] treeRepresentation(AVLNode node) {
+        // Return a list of textual representations of the levels in t
+        String zis = String.valueOf(node.getKey());
+        String[] leftTxt;
+        String[] rightTxt;
+        if (!node.getLeft().isRealNode())
+            leftTxt = new String[]{"┴"};
+        else
+            leftTxt = treeRepresentation(node.getLeft());
+        if (!node.getRight().isRealNode())
+            rightTxt = new String[]{"┴"};
+        else
+            rightTxt = treeRepresentation(node.getRight());
+        return concat(leftTxt,zis,rightTxt);
+    }
+
+    private static String[] concat(String[] left, String root, String[] right) {
+        // Return a concatenation of textual representation of
+        // a root node, its left node, and its right node
+        int leftWidth = left[left.length-1].length(); // levels in left
+        int rightWidth = right[right.length-1].length(); // levels in right
+        int rootWidth = root.length();
+        String[] result = new String[2 + Math.max(left.length,right.length)];
+        result[0] = mul(" ",leftWidth+1) + root + mul(" ",rightWidth+1); // first row
+        int ls = leftSpace(left[0]);
+        int rs = rightSpace(right[0]);
+        result[1] = mul(" ",ls) + mul(" ",leftWidth-ls) + "/" + mul(" ",rootWidth) + "\\" + mul(" ",rs) + mul(" ",rightWidth-rs); // second row
+        String row;
+        for (int i=0; i<Math.max(left.length,right.length); i++) {
+            // connect the i row in left to row i in right
+            row = "";
+
+            if (i < left.length) {
+                row += left[i];
+            }
+            else {
+                row += mul(" ",leftWidth);
+            }
+
+            row += mul(" ",rootWidth+2);
+
+            if (i < right.length) {
+                row += right[i];
+            }
+            else {
+                row += mul(" ",rightWidth);
+            }
+
+            result[i+2] = row;
+        }
+        return result;
+    }
+
+    private static int leftSpace(String row) {
+        int i = row.length()-1;
+        while (row.charAt(i)==' ') {i--;}
+        return i+1;
+        // returns the index of where the second whitespace starts
+    }
+
+    private static int rightSpace(String row) {
+        int i = 0;
+        while (row.charAt(i)==' ') {i++;}
+        return i;
+        // returns the index of where the first whitespace ends
+    }
+
+    private static String mul(String a, int t) {
+        if (t==0) {return "";}
+        return mul(a,t-1)+a;
+        // return new string of a+a...+a - t times
     }
 }
 
