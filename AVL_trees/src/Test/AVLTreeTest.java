@@ -240,7 +240,7 @@ class AVLTreeTest {
                 current = tree.successor(current);
             else
                 current = getMin();
-            return new Tuple<AVLNode, Integer>(current, counter - 1);
+            return new Tuple<>(current, counter - 1);
         }
 
         @Override

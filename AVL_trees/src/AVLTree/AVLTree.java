@@ -13,7 +13,9 @@ package AVLTree; //TODO remove in the submitted file
  */
 
 public class AVLTree {
-
+    /**
+     * Enum Direction that holds two directions for prevention of code duplication in the rotation code
+     */
     enum Direction {
         Right, Left;
 
@@ -23,8 +25,8 @@ public class AVLTree {
             }
             return Left;
         }
-    }
 
+    }
 
     /**
      * a virtual node that will be the child of a node without at least one real node
@@ -62,12 +64,39 @@ public class AVLTree {
     }
 
     /**
+     * public int getRoot()
+     * <p>
+     * Returns the root AVL node, or null if the tree is empty
+     */
+    public AVLNode getRoot() {
+        return this.root;
+    }
+
+    /**
+     * public int getRoot()
+     * <p>
+     * Sets the root AVL node.
+     */
+    public void setRoot(AVLNode root) {
+        this.root = root;
+    }
+
+    /**
      * public boolean empty()
      * <p>
      * Returns true if and only if the tree is empty
      */
     public boolean empty() {
         return this.getRoot() == null;
+    }
+
+    /**
+     * public int size()
+     * <p>
+     * Returns the number of nodes in the tree.
+     */
+    public int size() {
+        return this.empty() ? 0 : this.getRoot().getSize();
     }
 
     /**
@@ -81,7 +110,7 @@ public class AVLTree {
     }
 
     /**
-     * public AVLNode getMin()
+     * public AVLNode setMin()
      * <p>
      * Sets the node with the minimal key to min.
      */
@@ -90,7 +119,7 @@ public class AVLTree {
     }
 
     /**
-     * public AVLNode getMin()
+     * public AVLNode getMax()
      * <p>
      * Returns the node with the maximal key in the tree if,
      * or null if the tree is empty.
@@ -100,9 +129,9 @@ public class AVLTree {
     }
 
     /**
-     * public AVLNode getMin()
+     * public AVLNode setMax()
      * <p>
-     * Sets the node with the maximal key to min.
+     * Sets the node with the maximal key to max.
      */
     public void setMax(AVLNode max) {
         this.maxNode = max;
@@ -172,7 +201,7 @@ public class AVLTree {
             return -1;
         }
         AVLNode newNode = new AVLNode(k, i, node);
-        if (node.getKey() > k) {
+        if (node.getKey() > k) { // TODO maybe combine
             updateRelationsForNewLeftChild(node, newNode);
         } else {
             updateRelationsForNewRightChild(node, newNode);
@@ -278,17 +307,27 @@ public class AVLTree {
         return node.getBalanceFactor() > 1 || node.getBalanceFactor() < -1;
     }
 
+    /**
+     * private void rotateInDir(AVLNode node, Direction dir)
+     * <p>
+     * implement rotation for both sides using the {@link Direction} enum
+     *
+     * @param node the node to rotate from
+     * @param dir  the direction of the rotation
+     */
     private void rotateInDir(AVLNode node, Direction dir) {
-        Direction nodesPreviousDirection = getDirectionFromParent(node);
-        AVLNode child = node.getChildDir(dir.reverseDir());
-        node.setChildDir(child.getChildDir(dir), dir.reverseDir());
+        Direction nodesPreviousDirection = getDirectionFromParent(node); // save the node's direction relative to it's parent for the replacement later on
+        AVLNode child = node.getChildInDir(dir.reverseDir()); // get the child for the swap
+
+        node.setChildInDir(child.getChildInDir(dir), dir.reverseDir()); // replace the child in the rotation
+        node.getChildInDir(dir.reverseDir()).setParent(node);
+
         child.setParent(node.getParent());
-        child.setChildDir(node, dir);
+        child.setChildInDir(node, dir);
         node.setParent(child);
-        child.getParent().setChildDir(child, nodesPreviousDirection);
+        child.getParent().setChildInDir(child, nodesPreviousDirection); // set the child as the node's previous parent in the same direction
 
-
-        node.updateNodeFields();
+        node.updateNodeFields(); // update the fields - the order matters!
         child.updateNodeFields();
         if (this.getRoot() == node) {
             this.setRoot(child);
@@ -310,7 +349,7 @@ public class AVLTree {
      * <p>
      * Rotates the subtree left from the given node making it the left child of its pre right child
      */
-    private void rotateLeft(AVLNode node) { // same for rotateRight
+    private void rotateLeft(AVLNode node) {
         rotateInDir(node, Direction.Left);
     }
 
@@ -351,7 +390,7 @@ public class AVLTree {
             return -1;
         }
 
-        updateSuccessor(node.getPredecessor(), node.getSuccessor());
+        updateSuccessor(node.getPredecessor(), node.getSuccessor()); // keep the correctness of the successor and predecessor pointers
 
         if (this.getRoot() == node && node.getChildCount() == 0) { // the root is the only node in the tree
             this.setRoot(null);
@@ -377,13 +416,11 @@ public class AVLTree {
             }
         } else {
             if (node.getChildCount() == 1) {
-            /*
-            if the node at question has only one child we can bypass it by replacing it with it's only child
-             */
+                // if the node at question has only one child we can bypass it by replacing it with it's only child
 
-                AVLNode child = node.getChildDir((node.getLeft().isRealNode() ? Direction.Left : Direction.Right));
+                AVLNode child = node.getChildInDir((node.getLeft().isRealNode() ? Direction.Left : Direction.Right)); // gets the child to perform the bypass with
 
-                node.getParent().setChildDir(child, getDirectionFromParent(node));
+                node.getParent().setChildInDir(child, getDirectionFromParent(node)); // perform bypass
 
                 child.setParent(node.getParent());
 
@@ -398,10 +435,10 @@ public class AVLTree {
                 AVLNode succ = node.getSuccessor();
                 AVLNode nodeToBeBalancedFrom = succ.getParent() == node ? succ : succ.getParent(); // addressing the 2 cases
 
-                succ.getParent().setChildDir(succ.getRight(), getDirectionFromParent(succ)); // the first part of the bypass
+                succ.getParent().setChildInDir(succ.getRight(), getDirectionFromParent(succ)); // the first part of the bypass
 
                 succ.setParent(node.getParent()); // the second part of the bypass
-                node.getParent().setChildDir(succ, getDirectionFromParent(node));
+                node.getParent().setChildInDir(succ, getDirectionFromParent(node));
 
                 replaceChildren(node, succ);
 
@@ -409,9 +446,9 @@ public class AVLTree {
                     this.setRoot(succ);
                 }
 
-                return balanceTree(nodeToBeBalancedFrom);  //TODO check if we need to add 1 for the swap with the successor of node
+                return balanceTree(nodeToBeBalancedFrom);
             } else { // a leaf which is neither the min nor the max element
-                node.getParent().setChildDir(this.getVirtualNode(), getDirectionFromParent(node));
+                node.getParent().setChildInDir(this.getVirtualNode(), getDirectionFromParent(node));
             }
         }
         /*
@@ -419,24 +456,39 @@ public class AVLTree {
         balance the tree from the deleted node up to the root.
         The balance operation also updates the fields of the nodes and counts the number of the rotations.
          */
-        AVLNode replacingNode = (node.isLeftChild() ? node.getParent().getLeft() : node.getParent().getRight());
-        replacingNode = (replacingNode.isRealNode() ? replacingNode : node.getParent()); // TODO revisit the bug
-        return balanceTree(replacingNode);
+        return balanceTree(node.getParent());
     }
 
+    /**
+     * private void replaceChildren(AVLNode oldParent, AVLNode newParent)
+     * <p>
+     * sets the oldParent children to be the newParent children.
+     */
     private void replaceChildren(AVLNode oldParent, AVLNode newParent) {
-        newParent.setRight(oldParent.getRight());
+        newParent.setRight(oldParent.getRight()); // right child
         oldParent.getRight().setParent(newParent);
 
-        newParent.setLeft(oldParent.getLeft());
+        newParent.setLeft(oldParent.getLeft()); // left child
         oldParent.getLeft().setParent(newParent);
     }
 
+    /**
+     * private Direction getDirectionFromParent(AVLNode node)
+     * <p>
+     * retrieves the nodes direction from it's parent.
+     * i.e. if the node is the right child the method will return Direction.Right.
+     */
     private Direction getDirectionFromParent(AVLNode node) {
         return node.isLeftChild() ? Direction.Left : Direction.Right;
     }
 
-    private int balanceTree(AVLNode node) { // TODO check the counter
+    /**
+     * private int balanceTree(AVLNode node)
+     * <p>
+     * performs balancing operations to the root.
+     * returns the number of balancing operations that were performed + 1.
+     */
+    private int balanceTree(AVLNode node) {
         int rebalancingOperationsCounter = 0;
         AVLNode lastUpdatedNode = node;
         while (lastUpdatedNode.isRealNode()) { // balance to the top until the tree is balanced
@@ -445,7 +497,6 @@ public class AVLTree {
         }
         return rebalancingOperationsCounter;
     }
-
 
     /**
      * public Boolean min()
@@ -468,6 +519,20 @@ public class AVLTree {
     }
 
     /**
+     * public void inOrder(AVLNode node, int offset, AVLNode[] arr)
+     * <p>
+     * Auxiliary recursive function of nodesToArray(),
+     * performs in-order tree walk while adding the node to the array.
+     */
+    public void inOrder(AVLNode node, int offset, AVLNode[] arr) {
+        if (node.isRealNode()) {
+            inOrder(node.getLeft(), offset, arr);
+            arr[offset + node.getLeft().getSize()] = node; // assigns the node in the right position in the in-order array
+            inOrder(node.getRight(), offset + node.getLeft().getSize() + 1, arr);
+        }
+    }
+
+    /**
      * public AVLNode[] nodesToArray()
      * <p>
      * Returns an array which contains all nodes in the tree,
@@ -480,20 +545,6 @@ public class AVLTree {
             inOrder(this.getRoot(), 0, arr);
         }
         return arr;
-    }
-
-    /**
-     * public void inOrder(AVLNode node, int offset, AVLNode[] arr)
-     * <p>
-     * Auxiliary recursive function of nodesToArray(),
-     * performs in-order tree walk while adding the node to the array.
-     */
-    public void inOrder(AVLNode node, int offset, AVLNode[] arr) {
-        if (node.isRealNode()) {
-            inOrder(node.getLeft(), offset, arr);
-            arr[offset + node.getLeft().getSize()] = node; // assigns the node in the right position in the in-order array
-            inOrder(node.getRight(), offset + node.getLeft().getSize() + 1, arr);
-        }
     }
 
     /**
@@ -529,33 +580,6 @@ public class AVLTree {
             }
         }
         return arr;
-    }
-
-    /**
-     * public int size()
-     * <p>
-     * Returns the number of nodes in the tree.
-     */
-    public int size() {
-        return this.empty() ? 0 : this.getRoot().getSize();
-    }
-
-    /**
-     * public int getRoot()
-     * <p>
-     * Returns the root AVL node, or null if the tree is empty
-     */
-    public AVLNode getRoot() {
-        return this.root;
-    }
-
-    /**
-     * public int getRoot()
-     * <p>
-     * Sets the root AVL node.
-     */
-    public void setRoot(AVLNode root) {
-        this.root = root;
     }
 
     /**
@@ -661,19 +685,19 @@ public class AVLTree {
         @Override
         public String toString() {
             return "AVLNode{" +
-                    "key=" + key +
-                    ", info=" + info +
+                    "key=" + this.key +
+                    ", info=" + this.info +
                     '}';
         }
 
         //returns node's key (for virtual node return -1)
         public int getKey() {
-            return key;
+            return this.key;
         }
 
         //returns node's value [info] (for virtual node return null)
-        public boolean getValue() {
-            return info;
+        public Boolean getValue() {
+            return this.isRealNode() ? this.info : null;
         }
 
         //sets left child
@@ -700,9 +724,28 @@ public class AVLTree {
             return this.right;
         }
 
+        //sets child in direction dir
+        public void setChildInDir(AVLNode node, Direction dir) {
+            if (dir == Direction.Left) {
+                this.setLeft(node);
+                return;
+            }
+            this.setRight(node);
+        }
+
+        //returns child in direction dir (if there is no right child return null)
+        public AVLNode getChildInDir(Direction dir) {
+            if (dir == Direction.Left) {
+                return this.getLeft();
+            }
+            return this.getRight();
+        }
+
         //sets parent
         public void setParent(AVLNode node) {
-            if (this.isRealNode()) this.parent = node;
+            if (this.isRealNode()) {
+                this.parent = node;
+            }
         }
 
         //returns the parent (if there is no parent return null)
@@ -725,19 +768,14 @@ public class AVLTree {
             return this.height;
         }
 
-        //returns the size of the node (0 for virtual nodes)
-        public int getSize() {
-            return this.subTreeSize;
-        }
-
         //sets the size of the node
         public void setSize(int size) {
             this.subTreeSize = size;
         }
 
-        //returns the xor of the node (false for virtual nodes)
-        public boolean getSubTreeXor() {
-            return this.subTreeXor;
+        //returns the size of the node (0 for virtual nodes)
+        public int getSize() {
+            return this.subTreeSize;
         }
 
         //returns the size of the node (0 for virtual nodes)
@@ -745,14 +783,9 @@ public class AVLTree {
             this.subTreeXor = xor;
         }
 
-        //returns the balance factor of the node, if it is a virtual node return 0
-        public int getBalanceFactor() {
-            return isRealNode() ? this.getLeft().getHeight() - this.getRight().getHeight() : 0;
-        }
-
-        //returns the successor of the node in the tree (or null if successor doesn't exist)
-        public AVLNode getSuccessor() {
-            return this.successor;
+        //returns the xor of the node (false for virtual nodes)
+        public boolean getSubTreeXor() {
+            return this.subTreeXor;
         }
 
         //sets the successor of the node in the tree
@@ -762,9 +795,9 @@ public class AVLTree {
             }
         }
 
-        //returns the predecessor of the node in the tree (or null if successor doesn't exist)
-        public AVLNode getPredecessor() {
-            return this.predecessor;
+        //returns the successor of the node in the tree (or null if successor doesn't exist)
+        public AVLNode getSuccessor() {
+            return this.successor;
         }
 
         //sets the predecessor of the node in the tree
@@ -774,20 +807,23 @@ public class AVLTree {
             }
         }
 
+        //returns the predecessor of the node in the tree (or null if successor doesn't exist)
+        public AVLNode getPredecessor() {
+            return this.predecessor;
+        }
+
+        //returns the balance factor of the node, if it is a virtual node return 0
+        public int getBalanceFactor() {
+            return isRealNode() ? this.getLeft().getHeight() - this.getRight().getHeight() : 0;
+        }
+
         //updates height, size and xor fields of the node
         public void updateNodeFields() {
             AVLNode leftChild = this.getLeft();
             AVLNode rightChild = this.getRight();
-            this.setHeight(max(leftChild.getHeight(), rightChild.getHeight()) + 1); // updates the height by the maximum height of the children
+            this.setHeight(Math.max(leftChild.getHeight(), rightChild.getHeight()) + 1); // updates the height by the maximum height of the children
             this.setSize(leftChild.getSize() + rightChild.getSize() + 1); // updates the size by the size of the children
             this.setSubTreeXor(leftChild.getSubTreeXor() ^ rightChild.getSubTreeXor() ^ this.getValue()); // updates the xor by the xor of the children
-        }
-
-        private int max(int a, int b) {
-            if (a > b) {
-                return a;
-            }
-            return b;
         }
 
         //returns the number of the children of the node
@@ -806,110 +842,6 @@ public class AVLTree {
         public boolean isLeftChild() {
             return this.getKey() < this.getParent().getKey();
         }
-
-        public AVLNode getChildDir(Direction dir) {
-            if (dir == Direction.Left) {
-                return this.getLeft();
-            }
-            return this.getRight();
-        }
-
-        public void setChildDir(AVLNode child, Direction dir) {
-            if (dir == Direction.Left) {
-                this.setLeft(child);
-                return;
-            }
-            this.setRight(child);
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-    public void printTree() {
-        String[] visual = treeRepresentation(root);
-        for (String s : visual) {
-            System.out.println(s);
-        }
-    }
-
-    private static String[] treeRepresentation(AVLNode node) {
-        // Return a list of textual representations of the levels in t
-        String zis = String.valueOf(node.getKey());
-        String[] leftTxt;
-        String[] rightTxt;
-        if (!node.getLeft().isRealNode())
-            leftTxt = new String[]{"┴"};
-        else
-            leftTxt = treeRepresentation(node.getLeft());
-        if (!node.getRight().isRealNode())
-            rightTxt = new String[]{"┴"};
-        else
-            rightTxt = treeRepresentation(node.getRight());
-        return concat(leftTxt,zis,rightTxt);
-    }
-
-    private static String[] concat(String[] left, String root, String[] right) {
-        // Return a concatenation of textual representation of
-        // a root node, its left node, and its right node
-        int leftWidth = left[left.length-1].length(); // levels in left
-        int rightWidth = right[right.length-1].length(); // levels in right
-        int rootWidth = root.length();
-        String[] result = new String[2 + Math.max(left.length,right.length)];
-        result[0] = mul(" ",leftWidth+1) + root + mul(" ",rightWidth+1); // first row
-        int ls = leftSpace(left[0]);
-        int rs = rightSpace(right[0]);
-        result[1] = mul(" ",ls) + mul(" ",leftWidth-ls) + "/" + mul(" ",rootWidth) + "\\" + mul(" ",rs) + mul(" ",rightWidth-rs); // second row
-        String row;
-        for (int i=0; i<Math.max(left.length,right.length); i++) {
-            // connect the i row in left to row i in right
-            row = "";
-
-            if (i < left.length) {
-                row += left[i];
-            }
-            else {
-                row += mul(" ",leftWidth);
-            }
-
-            row += mul(" ",rootWidth+2);
-
-            if (i < right.length) {
-                row += right[i];
-            }
-            else {
-                row += mul(" ",rightWidth);
-            }
-
-            result[i+2] = row;
-        }
-        return result;
-    }
-
-    private static int leftSpace(String row) {
-        int i = row.length()-1;
-        while (row.charAt(i)==' ') {i--;}
-        return i+1;
-        // returns the index of where the second whitespace starts
-    }
-
-    private static int rightSpace(String row) {
-        int i = 0;
-        while (row.charAt(i)==' ') {i++;}
-        return i;
-        // returns the index of where the first whitespace ends
-    }
-
-    private static String mul(String a, int t) {
-        if (t==0) {return "";}
-        return mul(a,t-1)+a;
-        // return new string of a+a...+a - t times
     }
 }
 
