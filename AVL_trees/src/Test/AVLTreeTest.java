@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 
 class AVLTreeTest {
 
-    AVLTree tree = new AVLTree();
+    IAVLTree tree = new IAVLTree();
 
     @BeforeEach
     public void beforeTest() {
@@ -29,7 +31,9 @@ class AVLTreeTest {
     @Test
     public void search() {
         tree.insert(2, false);
+        isValidTree();
         tree.insert(1, true);
+        isValidTree();
         Assertions.assertEquals(false, tree.search(2));
         Assertions.assertEquals(true, tree.search(1));
         Assertions.assertNull(tree.search(3));
@@ -38,35 +42,62 @@ class AVLTreeTest {
     @Test
     public void insert() {
         Assertions.assertEquals(1, tree.insert(1, true));
+        isValidTree();
         Assertions.assertEquals(1, tree.insert(2, false));
+        isValidTree();
         Assertions.assertEquals(-1, tree.insert(2, false));
+        isValidTree();
         Assertions.assertEquals(2, tree.insert(3, true));
+    }
+
+    private void isValidTree() {
+        for (Tuple<AVLNode, Integer> nodeInteger :
+                tree.getIterator()) {
+            AVLNode node = nodeInteger.getKey();
+            AVLNode leftChild = node.getLeft();
+            AVLNode rightChild = node.getRight();
+            Assertions.assertEquals(Math.max(leftChild.getHeight(), rightChild.getHeight()) + 1, node.getHeight());
+            Assertions.assertEquals(leftChild.getSize() + rightChild.getSize() + 1, node.getSize());
+            Assertions.assertEquals(leftChild.getSubTreeXor() ^ rightChild.getSubTreeXor() ^ node.getValue(), node.getSubTreeXor());
+        }
     }
 
     @Test
     public void delete() {
         Assertions.assertEquals(-1, tree.delete(1));
         insertMany(1, 2, 3);
+        isValidTree();
         Assertions.assertEquals(-1, tree.delete(4));
+        isValidTree();
         Assertions.assertEquals(1, tree.delete(2));
+        isValidTree();
         insertMany(4, 2);
+        isValidTree();
         Assertions.assertEquals(2, tree.delete(4));
+        isValidTree();
         insertMany(5, 0, 4);
+        isValidTree();
         Assertions.assertEquals(1, tree.delete(1));
+        isValidTree();
         Assertions.assertEquals(2, tree.delete(0));
         resetTree();
         insertMany(50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1);
+        isValidTree();
         Assertions.assertEquals(3, tree.delete(80));
+        isValidTree();
     }
 
     @Test
     public void min() {
         Assertions.assertNull(tree.min());
         insertMany(10);
+        isValidTree();
         Assertions.assertEquals(false, tree.min());
         insertMany(new Tuple<>(5, true));
+        isValidTree();
         Assertions.assertEquals(true, tree.min());
         insertMany(15);
+        isValidTree();
         Assertions.assertEquals(true, tree.min());
     }
 
@@ -74,10 +105,13 @@ class AVLTreeTest {
     public void max() {
         Assertions.assertNull(tree.max());
         insertMany(10);
+        isValidTree();
         Assertions.assertEquals(false, tree.max());
         insertMany(new Tuple<>(5, true));
+        isValidTree();
         Assertions.assertEquals(false, tree.max());
         insertMany(new Tuple<>(15, true));
+        isValidTree();
         Assertions.assertEquals(true, tree.max());
     }
 
@@ -85,6 +119,7 @@ class AVLTreeTest {
     public void keysToArray() {
         int[] ints = {50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1};
         insertMany(ints);
+        isValidTree();
         Assertions.assertArrayEquals(Arrays.stream(ints).sorted().toArray(), tree.keysToArray());
     }
 
@@ -92,18 +127,21 @@ class AVLTreeTest {
     @Test
     public void infoToArray() {
         insertMany(Tuple.zip(new Integer[]{2, 1, 3}, new Boolean[]{false, true, true}));
+        isValidTree();
         Assertions.assertArrayEquals(tree.infoToArray(), new boolean[]{true, false, true});
         resetTree();
         int[] ints = {50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1};
         insertMany(ints);
+        isValidTree();
         Assertions.assertArrayEquals(tree.infoToArray(), createDuplicatedValue(false, ints.length));
     }
 
     @Test
-    public void size(){
+    public void size() {
         Assertions.assertEquals(0, tree.size());
         int[] ints = {50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1};
         insertMany(ints);
+        isValidTree();
         Assertions.assertEquals(ints.length, tree.size());
     }
 
@@ -111,23 +149,23 @@ class AVLTreeTest {
     public void getRoot() {
         Assertions.assertNull(tree.getRoot());
         insertMany(50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1);
+        isValidTree();
         Assertions.assertEquals(50, tree.getRoot().getKey());
     }
 
     @Test
     public void successor() {
-        int[] ints = {50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1};
-        int[] sorted = Arrays.stream(ints).sorted().toArray();
-        insertMany(ints);
-        AVLNode node = getMin(tree);
-        for (int i = 0; i < sorted.length - 1; i++) {
-            Assertions.assertEquals(sorted[i+1], tree.successor(node).getKey());
-            node = tree.successor(node);
+        Integer[] ints = {50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1};
+        Integer[] sorted = Stream.concat(Arrays.stream(ints).sorted(), Stream.of((Integer) null)).toArray(Integer[]::new);
+        insertMany(Arrays.stream(ints).mapToInt(i -> i).toArray());
+        isValidTree();
+        for (Tuple<AVLNode, Integer> nodeInteger :
+                tree.getIterator()) {
+            Assertions.assertEquals(sorted[nodeInteger.getValue() + 1], (tree.successor(nodeInteger.getKey()) == null ? null : tree.successor(nodeInteger.getKey()).getKey()));
         }
-        Assertions.assertNull(tree.successor(node));
     }
 
-    private AVLNode getMin(AVLTree tree) {
+    private AVLNode getMin() {
         if (!tree.empty()) {
             AVLNode node = tree.getRoot();
             while (node.getLeft().isRealNode()) {
@@ -150,6 +188,7 @@ class AVLTreeTest {
             }
             resetTree();
             insertMany(Tuple.zip(ints, values));
+            isValidTree();
             boolean xor = false;
             for (int j = 0; j < n; j++) {
                 xor ^= (n % (1 << j)) == 1;
@@ -170,11 +209,48 @@ class AVLTreeTest {
             }
             resetTree();
             insertMany(Tuple.zip(ints, values));
+            isValidTree();
             boolean xor = false;
             for (int j = 0; j < n; j++) {
                 xor ^= (n % (1 << j)) == 1;
                 Assertions.assertEquals(xor, tree.succPrefixXor(sorted.next()));
             }
+        }
+    }
+
+    class IAVLTree extends AVLTree {
+        treeIterator getIterator() {
+            return new treeIterator();
+        }
+    }
+
+    class treeIterator implements Iterator<Tuple<AVLNode, Integer>>, Iterable<Tuple<AVLNode, Integer>> {
+        AVLNode current = tree.getVirtualNode();
+        int counter = 0;
+
+        @Override
+        public boolean hasNext() {
+            return !current.isRealNode() || tree.successor(current) != null;
+        }
+
+        @Override
+        public Tuple<AVLNode, Integer> next() {
+            counter++;
+            if (current.isRealNode())
+                current = tree.successor(current);
+            else
+                current = getMin();
+            return new Tuple<AVLNode, Integer>(current, counter - 1);
+        }
+
+        @Override
+        public Iterator<Tuple<AVLNode, Integer>> iterator() {
+            return this;
+        }
+
+        @Override
+        public void forEach(Consumer<? super Tuple<AVLNode, Integer>> action) {
+            Iterable.super.forEach(action);
         }
     }
 
@@ -187,11 +263,11 @@ class AVLTreeTest {
     }
 
     private void resetTree() {
-        tree = new AVLTree();
+        tree = new IAVLTree();
     }
 
     /**
-     * inserts all the the keys given as argument to the tree with {@link AVLTree.AVLNode.info} false
+     * inserts all the the keys given as argument to the tree with info false
      */
     private void insertMany(int... keysArray) {
         for (int key : keysArray) {
@@ -242,5 +318,4 @@ class AVLTreeTest {
             return zippedTuples;
         }
     }
-
 }
