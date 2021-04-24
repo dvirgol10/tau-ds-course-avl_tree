@@ -225,9 +225,8 @@ public class AVLTree {
         parent.setLeft(newNode);
         if (this.getMin() == parent) {
             this.setMin(newNode);
-        } else {
-            updateSuccessor(parent.getPredecessor(), newNode); // sets the new node as the successor of the parent's predecessor
         }
+        updateSuccessor(parent.getPredecessor(), newNode); // sets the new node as the successor of the parent's predecessor
         updateSuccessor(newNode, parent); // sets parent as the successor of the new node
     }
 
@@ -241,9 +240,8 @@ public class AVLTree {
         parent.setRight(newNode);
         if (this.getMax() == parent) {
             this.setMax(newNode);
-        } else {
-            updateSuccessor(newNode, parent.getSuccessor());
         }
+        updateSuccessor(newNode, parent.getSuccessor());
         updateSuccessor(parent, newNode);
     }
 
