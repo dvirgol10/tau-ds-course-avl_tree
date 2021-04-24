@@ -432,18 +432,18 @@ public class AVLTree {
              1. perform a bypass with the right child (the successor) - afterwards the balance is from the successor
              2. perform a bypass with the successor - afterwards the balance is from the successor previous parent
              */
-                AVLNode succ = node.getSuccessor();
-                AVLNode nodeToBeBalancedFrom = succ.getParent() == node ? succ : succ.getParent(); // addressing the 2 cases
+                AVLNode pre = node.getPredecessor();
+                AVLNode nodeToBeBalancedFrom = pre.getParent() == node ? pre : pre.getParent(); // addressing the 2 cases
 
-                succ.getParent().setChildInDir(succ.getRight(), getDirectionFromParent(succ)); // the first part of the bypass
+                pre.getParent().setChildInDir(pre.getLeft(), getDirectionFromParent(pre)); // the first part of the bypass
 
-                succ.setParent(node.getParent()); // the second part of the bypass
-                node.getParent().setChildInDir(succ, getDirectionFromParent(node));
+                pre.setParent(node.getParent()); // the second part of the bypass
+                node.getParent().setChildInDir(pre, getDirectionFromParent(node));
 
-                replaceChildren(node, succ);
+                replaceChildren(node, pre);
 
                 if (this.getRoot() == node) { // if the node is the root, the new root will be his successor
-                    this.setRoot(succ);
+                    this.setRoot(pre);
                 }
 
                 return balanceTree(nodeToBeBalancedFrom);
