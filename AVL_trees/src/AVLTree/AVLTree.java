@@ -252,7 +252,7 @@ public class AVLTree {
      * <p>
      * updates the successor of node to be newNode and sets node as newNodes predecessor
      */
-    private void updateSuccessor(AVLNode node, AVLNode newNode) {
+    public void updateSuccessor(AVLNode node, AVLNode newNode) {
         newNode.setPredecessor(node);
         node.setSuccessor(newNode);
     }
@@ -265,7 +265,7 @@ public class AVLTree {
      * Returns the root if and only if the tree is balanced
      * and all the nodes are up to date.
      */
-    private AVLNode balanceTreeOnce(AVLNode node) {
+    public AVLNode balanceTreeOnce(AVLNode node) {
         while (node.isRealNode()) { // iterates up through the tree to the first unbalanced element, if the tree is balanced we exit the loop and return the virtual node
             node.updateNodeFields(); // update size, height and subTreeXor of the node in O(1)
             if (this.isUnbalanced(node)) {
@@ -842,6 +842,19 @@ public class AVLTree {
         public boolean isLeftChild() {
             return this.getKey() < this.getParent().getKey();
         }
+    }
+    
+       
+
+    public class BSTree extends AVLTree {
+        @Override
+        public void updateSuccessor(AVLNode node, AVLNode newNode) {
+        }
+        @Override
+        public AVLNode balanceTreeOnce(AVLNode node) {
+        }
+        
+
     }
 }
 
