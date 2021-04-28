@@ -397,18 +397,20 @@ public class AVLTree {
             return 1;
         } else if (this.getMin() == node) { // the node to delete is the min element
             this.setMin(node.getSuccessor());
-            if (this.getRoot() != node) { // root is the min element
+            node.getRight().setParent(node.getParent());
+            if (this.getRoot() != node) { // root is not the min element
                 node.getParent().setLeft(node.getRight());
-            } else { // min element is not the root
+            } else { // min element is the root
                 this.setRoot(node.getRight());
                 this.getRoot().setParent(this.getVirtualNode());
             }
 
         } else if (this.getMax() == node) { // the node to delete is the max element
             this.setMax(node.getPredecessor());
-            if (this.getRoot() != node) { // root is the max element
+            node.getLeft().setParent(node.getParent());
+            if (this.getRoot() != node) { // root is not the max element
                 node.getParent().setRight(node.getLeft());
-            } else { // max element is not the root
+            } else { // max element is the root
                 this.setRoot(node.getLeft());
                 this.getRoot().setParent(this.getVirtualNode());
             }
