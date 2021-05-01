@@ -3479,8 +3479,7 @@ AVLNode
 \begin_inset Formula $minNode$
 \end_inset
 
- מצביע לערך
- 
+ מצביע לערך 
 \family default
 \series default
 \shape default
@@ -3551,8 +3550,7 @@ AVLNode
 \begin_inset Formula $maxNode$
 \end_inset
 
- מצביע לערך
- 
+ מצביע לערך 
 \family default
 \series default
 \shape default
@@ -3988,8 +3986,7 @@ public AVLNode getMin()
 \color none
 מחזירה את הצומת בעל המפתח המינימלי מבין המפתחות של כלל הצמתים )לא וירטואליים(
  של העץ.
- אם העץ הוא עץ ריק, מחזירה
- 
+ אם העץ הוא עץ ריק, מחזירה 
 \family default
 \series default
 \shape default
@@ -4086,8 +4083,7 @@ public AVLNode getMax()
 \color none
 מחזירה את הצומת בעל המפתח המקסימלי מבין המפתחות של כלל הצמתים )לא וירטואליים(
  של העץ.
- אם העץ הוא עץ ריק, מחזירה
- 
+ אם העץ הוא עץ ריק, מחזירה 
 \family default
 \series default
 \shape default
@@ -4595,6 +4591,2130 @@ searchNode(int k)
 
 .
  לכן סיבוכיות הזמן הכוללת של הפעולה היא 
+\begin_inset Formula $O\left(\log n\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\series default
+\lang english
+public int insert(int k, boolean i)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מכניסה צומת חדש לעץ עם מפתח 
+\begin_inset Formula $k$
+\end_inset
+
+ ומידע 
+\begin_inset Formula $i$
+\end_inset
+
+, אם לא קיים צומת כזה ומחזירה את כמות פעולות האיזון שבוצעו כולל פעולת ההכנסה.
+ אם קיים בעץ צומת עם מפתח 
+\begin_inset Formula $k$
+\end_inset
+
+, הפעולה מחזירה
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $-1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+כיצד היא פועלת:
+\series default
+ 
+\end_layout
+
+\begin_layout Enumerate
+העץ ריק:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+יוצרת צומת חדש ומגדירה אותו בתור השורש, האיבר המינימלי והמקסימלי.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+העץ לא ריק:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+משתמשת ב 
+\series bold
+\lang english
+searchNode(int k)
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+כדי למצוא את הצומת שאמור להיות אביו של הצומת החדש, ומכניסה את הצומת החדש
+ בתור בנו בעזרת 
+\lang english
+updateRelationsForNewLeftChild(AVLNode parent, AVLNode newNode)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+או
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+updateRelationsForNewRightChild(AVLNode parent, AVLNode newNode)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ולאחר מכן נאזן את העץ בעזרת 
+\lang english
+balanceTreeOnce(AVLNode node)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ פעם אחת עך ידי קריאה יחידה )או שתיים במידה ונדרשה פעולת איזון(.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה:
+\series default
+ ב
+\begin_inset Quotes srd
+\end_inset
+
+מקרה הטוב
+\begin_inset Quotes srd
+\end_inset
+
+ הראינו כי 
+\lang english
+empty()
+\lang hebrew
+, 
+\lang english
+setRoot(AVLNode root)
+\lang hebrew
+, 
+\lang english
+setMin(AVLNode min)
+\lang hebrew
+, 
+\lang english
+setMax(AVLNode max)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+רצות ב
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ לכן סה
+\begin_inset Quotes srd
+\end_inset
+
+כ 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+ ב
+\begin_inset Quotes srd
+\end_inset
+
+מקרה הגרוע
+\begin_inset Quotes srd
+\end_inset
+
+ ישנן מספר קריאות למתודות אחרות בקוד - קריאה ל
+\lang english
+searchNode(int k)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+אשר מתבצעת ב-
+\begin_inset Formula $O\left(\log n\right)$
+\end_inset
+
+ זמן וקריאה ל
+\lang english
+balanceTreeOnce(AVLNode node)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+פעם או פעמיים כך שסה
+\begin_inset Quotes srd
+\end_inset
+
+כ עוברים על העץ מהצומת הנוכחי עד שורש שזה חסום בגובה העץ לכן גם כן 
+\begin_inset Formula $O\left(\log n\right)$
+\end_inset
+
+ זמן ושתי הפעולות האחרות מתבצעות ב-
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+ לכן סיבוכיות הזמן הכוללת של הפעולה היא 
+\begin_inset Formula $O\left(\log n\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+הפעולה 
+\lang english
+private void updateRelationsForNewLeftChild(AVLNode parent, AVLNode newNode)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מגדירה את 
+\lang english
+newNode
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+בתור בנו השמאלי של
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+node
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+תוך התחשבות במקרי הקצה ועדכון המצביעים הרלוונטים.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולות 
+\lang english
+setLeft(AVLNode node)
+\lang hebrew
+, 
+\lang english
+getMin()
+\lang hebrew
+, 
+\lang english
+setMin(AVLNode min)
+\lang hebrew
+, 
+\lang english
+updateSuccessor(AVLNode node, AVLNode newNode)
+\lang hebrew
+ מתבצעות בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+הפעולה 
+\lang english
+private void updateRelationsForNewRightChild(AVLNode parent, AVLNode newNode)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מגדירה את 
+\lang english
+newNode
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+בתור בנו הימני של
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+node
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+תוך התחשבות במקרי הקצה ועדכון המצביעים הרלוונטים.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולות 
+\lang english
+setRight(AVLNode node)
+\lang hebrew
+, 
+\lang english
+getMax()
+\lang hebrew
+, 
+\lang english
+setMax(AVLNode min)
+\lang hebrew
+, 
+\lang english
+updateSuccessor(AVLNode node, AVLNode newNode)
+\lang hebrew
+ מתבצעות בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+הפעולה 
+\lang english
+private AVLNode balanceTreeOnce(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ עולה מהצומת המועבר אל השורש עד שהיא נתקלת בצומת לא מאוזן, מאזנת אותו ומחזירה
+ את אביו.
+ אם העץ מאוזן הפעולה תחזיר את הצומת הוירטואלי.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הפעולה עולה במסלול ישיר אל הצומת הלא מאוזן )או לחילופין השורש( עם פעולות
+ 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ לכןחלק זה הוא חסום באורך המסלול מהצומת הנתון אל הצומת שצריך איזון.
+ בנוסף, הראינו כי הפעולות 
+\lang english
+setLeft(AVLNode node)
+\lang hebrew
+, 
+\lang english
+getMin()
+\lang hebrew
+, 
+\lang english
+setMin(AVLNode min)
+\lang hebrew
+, 
+\lang english
+updateSuccessor(AVLNode node, AVLNode newNode)
+\lang hebrew
+ מתבצעות בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+הפעולה 
+\lang english
+private void balanceNode(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מפעילה את פעולת האיזון המתאימה על הצומת לפי החוקיות שראינו בכיתה.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הפונקציה קוראת לאחת מארבע פעולות האיזון
+\end_layout
+
+\begin_layout Itemize
+המתודה 
+\lang english
+rotateRight(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+המתודה 
+\lang english
+rotateLeft(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+המתודה 
+\lang english
+rotateLeftThenRight(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+המתודה 
+\lang english
+rotateRightThenLeft(AVLNode node)
+\lang hebrew
+ 
+\end_layout
+
+\begin_layout Standard
+ומבצעת שאילתות 
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getBalanceFactor()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getLeft()
+\end_layout
+
+\begin_layout Standard
+ב-
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ לכן סך הפעולות הוא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+הפעולה 
+\lang english
+private boolean isUnbalanced(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מחזירה האם גורם האיזון של הצומת בטווח המתאים.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+מבצעת שאילתת 
+\lang english
+getBalanceFactor()
+\lang hebrew
+ ב-
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ לכן סך הפעולות הוא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+הפעולה 
+\lang english
+private void rotateInDir(AVLNode node, Direction dir)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מבצעת פעולת איזון מסוג סיבוב יחיד ימינה או שמאלה בהינתן הכיוון 
+\lang english
+dir
+\lang hebrew
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+כיצד היא פועלת: 
+\series default
+פועלת לפי האלגוריתם שראינו בכיתה אך בכלליות לשני הכיוונים: תחילה מעבירה
+ את הילד המתאים, מתקנת מצביעים, מתקנת נכונות שדות ולבסוף מוודאת כי המצביע
+ לשורש הוא נכון.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+ישנן קריאות לשאילותות ומתודות הרצות בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+השאילתות:
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getDirectionFromParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+reverseDir()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getChildInDir(Direction dir)
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getRoot()
+\end_layout
+
+\begin_layout Standard
+הפעולות
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setChildInDir(AVLNode node, Direction dir)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+updateNodeFields()
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setRoot(AVLNode root)
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+private void rotateRight(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מבצעת סיבוב יחיד ימינה מהצומת הנתון.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולה 
+\lang english
+rotateInDir(AVLNode node, Direction dir)
+\lang hebrew
+ מתבצעת בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+private void rotateLeft(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מבצעת סיבוב יחיד שמאלה מהצומת הנתון.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולה 
+\lang english
+rotateInDir(AVLNode node, Direction dir)
+\lang hebrew
+ מתבצעת בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+private void rotateLeftThenRight(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מבצעת סיבוב שמאלה וימינה מהצומת הנתון.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולות
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+rotateRight(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+rotateLeft(AVLNode node)
+\lang hebrew
+ 
+\end_layout
+
+\begin_layout Standard
+מתבצעות בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+private void rotateRightThenLeft(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מבצעת סיבוב ימינה ושמאלה מהצומת הנתון.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולות
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+rotateRight(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+rotateLeft(AVLNode node)
+\lang hebrew
+ 
+\end_layout
+
+\begin_layout Standard
+מתבצעות בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+public int delete(int k)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מוחקת את הצומת בעל המפתח הנתון מהעץ אם הוא קיים ומחזירה את כמות פעולות
+ האיזון שנדרשו לאיזון העץ, או 
+\begin_inset Formula $-1$
+\end_inset
+
+ אם הצומת המתאים לא נמצא בעץ.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+כיצד היא פועלת:
+\series default
+ תחילה הפעולה מוצאת את הצומת בעל המתפח הנתון, אם הוא קיים, מעדכנת את המצביעים
+ של העוקב והקודם שלו באמצעות 
+\lang english
+updateSuccessor(AVLNode node, AVLNode newNode)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ ולאחר מכן נוקטת באחד מששת המקרים המתאימים:
+\end_layout
+
+\begin_layout Enumerate
+הצומת הוא השורש וללא הילידם - משמע הוא הצומת היחידי בעץ
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+נגדיר את העץ למצב של עץ 
+\begin_inset Quotes sld
+\end_inset
+
+חדש
+\begin_inset Quotes srd
+\end_inset
+
+ ללא צמתים ונחזיר 
+\begin_inset Formula $1$
+\end_inset
+
+ כנגד המחיקה היחדה שבוצעה.
+\end_layout
+
+\begin_layout Standard
+האיפוס יתבצע באמצעות הפעולות:
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setRoot(AVLNode root)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setMin(AVLNode min)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setMax(AVLNode max)
+\end_layout
+
+\begin_layout Standard
+אשר כל אחת פועלת ב-
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ בסיבוכיות כוללת של 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+הצומת הוא המינימום בעץ:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+נעדכן את המינימום בעץ להיות העוקב של הצומת ונבצע מעקף עם בנו הימני - הבן
+ היחידי שיכול להיות לו - אם אין לו בן אז הוא הלכה למעשה מוחלף בצומת וירטואלי
+ פשוט כמו מחיקת עלה מעץ.
+\end_layout
+
+\begin_layout Standard
+זאת באמצעות השאילתות:
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getSuccessor()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getRight()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getParent()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getRoot()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getVirtualNode()
+\end_layout
+
+\begin_layout Standard
+אשר כולן בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ והפעולות:
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setMin(AVLNode min)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setLeft(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+אשר גם הן בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ ולכן הסיבוכיות הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+הצומת הוא המקסימום בעץ:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+נעדכן את המקסימום בעץ להיות הקודם של הצומת ונבצע מעקף עם בנו השמאלי - הבן
+ היחידי שיכול להיות לו - אם אין לו בן אז הוא הלכה למעשה מוחלף בצומת וירטואלי
+ פשוט כמו מחיקת עלה מעץ.
+\end_layout
+
+\begin_layout Standard
+זאת באמצעות השאילתות:
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getPredecessor()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getLeftt()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getParent()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getRoot()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getVirtualNode()
+\end_layout
+
+\begin_layout Standard
+אשר כולן בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ והפעולות:
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setMax(AVLNode min)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setRight(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+אשר גם הן בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ ולכן הסיבוכיות הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+הצומת לא השורש והוא אינו המינימום או המקסימום בעץ:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+לצומת בן יחיד:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+נבצע מעקף עם בן זה.
+\end_layout
+
+\begin_layout Standard
+נשתמש בשאילתות
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getLeft()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+isRealNode()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getChildInDir(Direction dir)
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getParent()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getDirectionFromParent(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+והפעולות:
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setChildInDir(AVLNode node, Direction dir)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+לצומת שני בנים:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+מאחר והקודם לצומת חייב להיות בתת העץ של אותו הצומת מאחר ויש לצומת שני ילדים
+ נובע כי הקודם נמצא בתת העץ השמאלי ויתר על כן לא ייתכן כי יש לו ילד ימני
+ אחרת הוא או ילד ימני שלו היה הקודם לכן נוכל לבצע מעקף לצומת הקודם ולאחר
+ ש
+\begin_inset Quotes srd
+\end_inset
+
+שחררנו
+\begin_inset Quotes srd
+\end_inset
+
+ אותו נחליף איתו את הצומת אותו אנו רוצים למחוק.
+ לבסוף נבצע מעקף מהאב של הקודם או במקרה וזה בנו השמאלי של הצומת אז מהאיבר
+ הקודם.
+\end_layout
+
+\begin_layout Standard
+נבצע זאת באמצעות השאילתות:
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getPredecessor()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getParent()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getLeft()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getDirectionFromParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getRoot()
+\end_layout
+
+\begin_layout Standard
+והפעולות:
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setChildInDir(AVLNode node, Direction dir)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+replaceChildren(AVLNode oldParent, AVLNode newParent)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setChildInDir(AVLNode node, Direction dir)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setRoot(AVLNode root)
+\end_layout
+
+\begin_layout Standard
+ראינו כי כלל הפעולות והשאילתות מתבצעות בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+הצומת הוא עלה בעץ:
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+נבצע מעקף עם הבן שלו שהוא צומת וירטואלי.
+\end_layout
+
+\begin_layout Standard
+זאת באמצעות השאילתות:
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getParent()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getDirectionFromParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+השאילתה
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+getVirtualNode()
+\end_layout
+
+\begin_layout Standard
+והפעולה 
+\lang english
+setChildInDir(AVLNode node, Direction dir)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+אשר כולן רצות בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Standard
+ובסיום רצה הפעולה 
+\lang english
+balanceNode(AVLNode node)
+\lang hebrew
+.
+\end_layout
+
+\begin_layout Standard
+ראינו כי כלל הפעולות והשאילתות מתבצעות בסיבוכיות 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ למעט
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+balanceNode(AVLNode node)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+הרצה בסיבוכיות 
+\begin_inset Formula $O\left(\log n\right)$
+\end_inset
+
+ לכן הפעולה רצה בסיבוכיות 
+\begin_inset Formula $O\left(\log n\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+private void replaceChildren(AVLNode oldParent, AVLNode newParent)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מעבירה את ילדי 
+\lang english
+oldParent
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+להיות ילדי 
+\lang english
+newParent
+\lang hebrew
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+כיצד היא פועלת:
+\series default
+ קוראת לפעולות 
+\lang english
+setRight(AVLNode node)
+\lang hebrew
+, 
+\lang english
+setLeft(AVLNode node)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+על מנת להגדיר את ילדי 
+\lang english
+oldParent
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+להיות ילדי 
+\lang english
+newParent
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ואז משתמשת ב
+\lang english
+setParent(AVLNode node)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+על מנת להגיד את 
+\lang english
+newParent
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+בתור ההורה של ילדי
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+oldParent
+\lang hebrew
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולות 
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getRight()
+\end_layout
+
+\begin_layout Itemize
+השאילתה 
+\lang english
+getLeft()
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setParent(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setRight(AVLNode node)
+\end_layout
+
+\begin_layout Itemize
+הפעולה 
+\lang english
+setLeft(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+מתבצעות בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+private Direction getDirectionFromParent(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מחזירה את הכיוון באופן יחסי לאבא של הצומת, אם הצומת הנתון הוא השורש הכיוון
+ שיוחזר הוא ימינה.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+כיצד היא פועלת:
+\series default
+ קוראת ל
+\lang english
+isLeftChild()
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ולפי ערך ההחזרה שלו מחזירה את הכיוון המתאים.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולה 
+\lang english
+isLeftChild()
+\lang hebrew
+ מתבצעת בסיבוכיות זמן 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+
+\series bold
+הפעולה 
+\lang english
+private int balanceTree(AVLNode node)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+מה היא עושה:
+\series default
+ מאזנת את העץ מהצומת הנתון ועד לשורש, בסיום מחזירה את כמות פעולות האיזון
+ )ועוד אחת( שהתבצעו.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+כיצד היא פועלת:
+\series default
+ מתחילה מהצומת הנתון וממשיכה בלולאה עד שהיא מגיעה לאבא של השורש )הצומת הוירטואלי
+( בקריאה ל 
+\lang english
+balanceTreeOnce(AVLNode node)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ומגדילה ב
+\begin_inset Formula $1$
+\end_inset
+
+ את המונה.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+הראינו כי הפעולה 
+\lang english
+balanceTreeOnce(AVLNode node)
+\lang hebrew
+ מתבצעת בסיבוכיות אורך המסלול בין הצומת הנתון אל הצומת המוחזר.
+ אנו קוראים בלולאה שוב ושוב לפעולה עם הערך המוחזר עד שאנו מגיעים לשורש כלומר
+ בסיבוכיות של אורך המסלול מהצמת הנתון אל השורש שהיא חסומה בגובה העץ הלא
+ הוא 
+\begin_inset Formula $O\left(\log n\right)$
+\end_inset
+
+, לכן סיבוכיות זמן הריצה הכוללת היא 
 \begin_inset Formula $O\left(\log n\right)$
 \end_inset
 
