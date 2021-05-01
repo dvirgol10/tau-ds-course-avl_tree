@@ -478,6 +478,7 @@ public class AVLTree {
      * <p>
      * retrieves the nodes direction from it's parent.
      * i.e. if the node is the right child the method will return Direction.Right.
+     * if the given node is the root the returned value will be Direction.Right.
      */
     private Direction getDirectionFromParent(AVLNode node) {
         return node.isLeftChild() ? Direction.Left : Direction.Right;
