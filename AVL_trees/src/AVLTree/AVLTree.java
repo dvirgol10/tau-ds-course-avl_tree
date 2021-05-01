@@ -388,6 +388,8 @@ public class AVLTree {
             return -1;
         }
 
+        AVLNode nodeToBeBalancedFrom = node.getParent();
+
         updateSuccessor(node.getPredecessor(), node.getSuccessor()); // keep the correctness of the successor and predecessor pointers
 
         if (this.getRoot() == node && node.getChildCount() == 0) { // the root is the only node in the tree
@@ -433,7 +435,8 @@ public class AVLTree {
              2. perform a bypass with the predecessor - afterwards the balance is from the predecessor previous parent.
              */
                 AVLNode pre = node.getPredecessor();
-                AVLNode nodeToBeBalancedFrom = pre.getParent() == node ? pre : pre.getParent(); // addressing the 2 cases
+
+                nodeToBeBalancedFrom = pre.getParent() == node ? pre : pre.getParent(); // addressing the 2 cases
 
                 pre.getParent().setChildInDir(pre.getLeft(), getDirectionFromParent(pre)); // the first part of the bypass
 
@@ -445,8 +448,6 @@ public class AVLTree {
                 if (this.getRoot() == node) { // if the node is the root, the new root will be his predecessor
                     this.setRoot(pre);
                 }
-
-                return balanceTree(nodeToBeBalancedFrom);
             } else { // a leaf which is neither the min nor the max element
                 node.getParent().setChildInDir(this.getVirtualNode(), getDirectionFromParent(node));
             }
@@ -456,7 +457,7 @@ public class AVLTree {
         balance the tree from the deleted node up to the root.
         The balance operation also updates the fields of the nodes and counts the number of the rotations.
          */
-        return balanceTree(node.getParent());
+        return balanceTree(nodeToBeBalancedFrom);
     }
 
     /**
