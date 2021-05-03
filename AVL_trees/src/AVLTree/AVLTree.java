@@ -847,6 +847,22 @@ public class AVLTree {
     }
 
 
+
+    public class BSTree extends AVLTree {
+        @Override
+        public void updateSuccessor(AVLNode node, AVLNode newNode) {
+        }
+        @Override
+        public AVLNode balanceTreeOnce(AVLNode node) {
+        }
+
+
+    }
+
+
+
+
+
     public void printTree() {
         String[] visual = treeRepresentation(root);
         for (String s : visual) {
@@ -930,6 +946,9 @@ public class AVLTree {
         return mul(a, t - 1) + a;
         // return new string of a+a...+a - t times
     }
+
+}
+
 }
 
 
