@@ -250,7 +250,7 @@ public class AVLTree {
      * <p>
      * updates the successor of node to be newNode and sets node as newNodes predecessor
      */
-    private void updateSuccessor(AVLNode node, AVLNode newNode) {
+    protected void updateSuccessor(AVLNode node, AVLNode newNode) {
         newNode.setPredecessor(node);
         node.setSuccessor(newNode);
     }
@@ -263,7 +263,7 @@ public class AVLTree {
      * Returns the root if and only if the tree is balanced
      * and all the nodes are up to date.
      */
-    private AVLNode balanceTreeOnce(AVLNode node) {
+    protected AVLNode balanceTreeOnce(AVLNode node) {
         while (node.isRealNode()) { // iterates up through the tree to the first unbalanced element, if the tree is balanced we exit the loop and return the virtual node
             node.updateNodeFields(); // update size, height and subTreeXor of the node in O(1)
             if (this.isUnbalanced(node)) {
@@ -683,6 +683,10 @@ public class AVLTree {
             this.predecessor = getVirtualNode();
         }
 
+        //returns True if this is a non-virtual AVL node
+        public boolean isRealNode() {
+            return this.key != -1;
+        }
 
         @Override
         public String toString() {
@@ -753,11 +757,6 @@ public class AVLTree {
         //returns the parent (if there is no parent return null)
         public AVLNode getParent() {
             return this.parent;
-        }
-
-        //returns True if this is a non-virtual AVL node
-        public boolean isRealNode() {
-            return this.key != -1;
         }
 
         //sets the height of the node
@@ -848,17 +847,17 @@ public class AVLTree {
 
 
 
-    public class BSTree extends AVLTree {
+    public static class BSTree extends AVLTree {
         @Override
         public void updateSuccessor(AVLNode node, AVLNode newNode) {
         }
         @Override
         public AVLNode balanceTreeOnce(AVLNode node) {
+            return this.getVirtualNode();
         }
 
 
     }
-
 
 
 
@@ -948,7 +947,3 @@ public class AVLTree {
     }
 
 }
-
-}
-
-
