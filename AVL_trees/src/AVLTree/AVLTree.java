@@ -688,14 +688,6 @@ public class AVLTree {
             return this.key != -1;
         }
 
-        @Override
-        public String toString() {
-            return "AVLNode{" +
-                    "key=" + this.key +
-                    ", info=" + this.info +
-                    '}';
-        }
-
         //returns node's key (for virtual node return -1)
         public int getKey() {
             return this.key;
@@ -796,7 +788,7 @@ public class AVLTree {
             }
         }
 
-        //returns the successor of the node in the tree (or null if successor doesn't exist)
+        //returns the successor of the node in the tree (or the virtual node if successor doesn't exist)
         public AVLNode getSuccessor() {
             return this.successor;
         }
@@ -808,7 +800,7 @@ public class AVLTree {
             }
         }
 
-        //returns the predecessor of the node in the tree (or null if successor doesn't exist)
+        //returns the predecessor of the node in the tree (or the virtual node if successor doesn't exist)
         public AVLNode getPredecessor() {
             return this.predecessor;
         }
@@ -842,6 +834,14 @@ public class AVLTree {
         //returns true if and only if the node is the left child of his parent
         public boolean isLeftChild() {
             return this.getKey() < this.getParent().getKey();
+        }
+
+        @Override
+        public String toString() {
+            return "AVLNode{" +
+                    "key=" + this.key +
+                    ", info=" + this.info +
+                    '}';
         }
     }
 
