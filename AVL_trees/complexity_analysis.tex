@@ -1,0 +1,1015 @@
+%% LyX 2.3.5.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english,hebrew]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9,cp1255]{inputenc}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in,headheight=0.5in,headsep=0.5in,footskip=0.5in}
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+\usepackage{float}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\usepackage{theorem}
+\theorembodyfont{\upshape}
+% LuaTeX/luabidi does not know \beginR
+% FIXME LuaTeX/luabidi does not get the order right
+\AtBeginDocument{
+\@ifundefined{setRTL}{}{\providecommand\beginR{\setRTL}}
+}
+\newtheorem{theorem}{{\beginR משפט}}[section]
+% Only needed by babel, not polyglossia (which does
+% not have \make@lr defined)
+\@ifundefined{make@lr}{}{%
+   \AtBeginDocument{\make@lr\thetheorem}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{culmus}
+
+\makeatother
+
+\usepackage{babel}
+\begin{document}
+\title{מבני נתונים - פרויקט מעשי עץ \inputencoding{latin9}\L{AVL}}
+
+\maketitle
+\tableofcontents{}
+
+\pagebreak{}
+
+\section{המחלקה \L{AVLNode}}
+
+\subsection{שדות המחלקה:}
+\begin{enumerate}
+\item הקבוע הפרטי \L{$key$} מסוג \inputencoding{latin9}\L{int}\inputencoding{cp1255}
+אשר מייצג את המפתח של צומת זה בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+\item הקבוע הפרטי \L{$info$} מסוג \inputencoding{latin9}\L{boolean}\inputencoding{cp1255}
+אשר מייצג את המידע של צומת זה בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+\item המשתנה הפרטי \L{$height$} מסוג \inputencoding{latin9}\L{int}\inputencoding{cp1255}
+אשר מייצג את גובה תת-העץ אשר צומת זה הוא שורשו.
+\item המשתנה הפרטי \L{$parent$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מייצג את אביו הישיר של צומת זה בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+\item המשתנה הפרטי \L{$left$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מייצג את בנו השמאלי הישיר של צומת זה בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+\item המשתנה הפרטי \L{$right$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מייצג את בנו הימני הישיר של צומת זה בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+\item המשתנה הפרטי \L{$subTreeSize$} מסוג \inputencoding{latin9}\L{int}\inputencoding{cp1255}
+אשר מייצג את גודל תת-העץ אשר צומת זה הוא שורשו.
+\item המשתנה הפרטי \L{$subTreeXor$} מסוג \inputencoding{latin9}\L{boolean}\inputencoding{cp1255}
+אשר משמש למימוש יעיל של \inputencoding{latin9}\L{perfixXor}\inputencoding{cp1255}
+ומייצג את תוצאת פעולת \inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+על שדות \L{$info$} של כל הצמתים בתת-העץ אשר צומת זה הוא שורשו.
+\item המשתנה הפרטי \L{$successor$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מייצג את הצומת העוקב )הצומת עם המפתח העוקב בקבוצת המפתחות של הצמתים
+בעץ( של צומת זה בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+אם הצומת הוא האיבר עם המפתח המקסימלי בעץ, ערך שדה זה יהיה \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+\item המשתנה הפרטי \L{$predecessor$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מייצג את הצומת הקודם )הצומת עם המפתח הקודם בקבוצת המפתחות של הצמתים
+בעץ( של צומת זה בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+אם הצומת הוא האיבר עם המפתח המינימלי בעץ, ערך שדה זה יהיה \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+\end{enumerate}
+
+\subsection{בנאי המחלקה:}
+
+\subsubsection{הבנאי הריק \L{public AVLNode()}}
+
+\textbf{מה הוא עושה: }פעולה בונה של המחלקה, מאתחלת ערכים לשדות מסוימים
+עבור צומת וירטואלי בעץ. כלומר, פעולה זו בונה צומת וירטואלי.
+
+\textbf{כיצד הוא פועל:} מאתחל לשדות ערכים לפי ערכי הצומת הוירטואלי
+הרצויים. 
+
+\textbf{סיבוכיות זמן הריצה:} מתבצע מספר קבוע של השמות, ולכן סיבוכיות
+זמן הריצה הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הבנאי \L{public AVLNode(int key, boolean info, AVLNode parent)}}
+
+\textbf{הפרמטרים: }\inputencoding{latin9}\L{int key}\inputencoding{cp1255}
+- ערך המפתח של הצומת. \inputencoding{latin9}\L{boolean info}\inputencoding{cp1255}
+- ערך המידע ששמור בצומת. \inputencoding{latin9}\L{AVLNode parent}\inputencoding{cp1255}
+- אביו של הצומת בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}.
+
+\textbf{מה הוא עושה: }פעולה בונה של המחלקה, מאתחלת את שדות המחלקה
+עבור עלה בעץ.
+\begin{itemize}
+\item השדה \L{$key$} מאותחל לפרמטר \L{$key$} שניתן על ידי המשתמש.
+\item השדה \L{$info$} מאותחל לפרמטר \L{$info$} שניתן על ידי המשתמש.
+\item השדה \L{$height$} מאותחל ל-{\beginL 0\endL}, שהוא גובה של תת-עץ בעל
+צומת אחד.
+\item השדה \L{$parent$} מאותחל לפרמטר \L{$parent$} שניתן על ידי המשתמש.
+\item השדה \L{$subTreeSize$} מאותחל ל-{\beginL 1\endL}, שהוא כמות הצמתים
+בתת-עץ בעל צומת אחד.
+\item השדה \L{$subTreeXor$} מאותחל לפרמטר \L{$info$} שניתן על ידי המשתמש,
+שכן זהו תוצאת פעולת \inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+על כלל המידע של הצמתים שנמצאים בתת-העץ ששורשו הוא צומת זה, כלומר תת-עץ
+עם צומת יחיד.
+\item השדה \L{$left$} מאותחל לצומת הוירטואלי של העץ )\inputencoding{latin9}\L{AVLTree}\inputencoding{cp1255}(
+בו הוא נוצר, שכן הייצוג של חוסר קיום ילד לצומת, הוא צומת וירטואלי.
+\item השדה \L{$right$} מאותחל לצומת הוירטואלי של העץ )\inputencoding{latin9}\L{AVLTree}\inputencoding{cp1255}(
+בו הוא נוצר.
+\end{itemize}
+\textbf{כיצד הוא פועל:} מאתחל חלק משדות המחלקה בהתאם לכללים והגדרות
+אחריהם אנו עוקבים בקורס, כאשר השמה חוקית לשדות \inputencoding{latin9}\L{successor}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{predecessor}\inputencoding{cp1255} תתבצע
+במהלך הפעולה \inputencoding{latin9}\L{public int insert(int k, boolean
+i)}\inputencoding{cp1255}, פעולת הכנסת צומת של המחלקה \inputencoding{latin9}\L{AVLTree}\inputencoding{cp1255}.
+
+\textbf{סיבוכיות זמן הריצה:} מתבצע מספר קבוע של השמות, וכן קריאה למתודה
+\inputencoding{latin9}\L{getVirtualNode()}\inputencoding{cp1255} אשר
+כפי שניתן יהיה לראות בהמשך, פועלת ב-\L{$O\left(1\right)$} סיבוכיות
+זמן ריצה. לכן סיבוכיות זמן הריצה הכוללת היא \L{$O\left(1\right)$}.
+
+\subsection{פעולות המחלקה:}
+
+\subsubsection{הפעולה \L{public boolean isRealNode()}}
+
+\textbf{מה היא עושה: }מחזירה האם הצומת הוא אמיתי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה השוואה וגישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public int getKey()}}
+
+\textbf{מה היא עושה: }מחזירה את המפתח של הצומת.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public Boolean getValue()}}
+
+\textbf{מה היא עושה: }מחזירה את המידע של הצומת.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה קריאה לפעולה \inputencoding{latin9}\L{isRealNode()}\inputencoding{cp1255}
+שרצה ב-\L{$O\left(1\right)$} וכן גישה אחת לשדה, לכן סיבוכיות זמן
+הריצה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setLeft(AVLNode node)}}
+
+\textbf{מה היא עושה: }אם הצומת \L{$node$} הוא אמיתי, קובעת אותו כבן
+השמאלי של הצומת הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה קריאה לפעולה \inputencoding{latin9}\L{isRealNode()}\inputencoding{cp1255}
+שרצה ב-\L{$O\left(1\right)$} וכן גישה אחת לשדה, לכן סיבוכיות זמן
+הריצה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getLeft()}}
+
+\textbf{מה היא עושה: }מחזירה את הבן השמאלי של הצומת.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setRight(AVLNode node)}}
+
+\textbf{מה היא עושה: }אם הצומת \L{$node$} הוא אמיתי, קובעת אותו כבן
+הימני של הצומת הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה קריאה לפעולה \inputencoding{latin9}\L{isRealNode()}\inputencoding{cp1255}
+שרצה ב-\L{$O\left(1\right)$} וכן גישה אחת לשדה, לכן סיבוכיות זמן
+הריצה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getRight()}}
+
+\textbf{מה היא עושה: }מחזירה את הבן הימני של הצומת.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setParent(AVLNode node)}}
+
+\textbf{מה היא עושה: }אם הצומת \L{$node$} הוא אמיתי, קובעת אותו כאבא
+של הצומת הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה קריאה לפעולה \inputencoding{latin9}\L{isRealNode()}\inputencoding{cp1255}
+שרצה ב-\L{$O\left(1\right)$} וכן גישה אחת לשדה, לכן סיבוכיות זמן
+הריצה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getParent()}}
+
+\textbf{מה היא עושה: }מחזירה את אביו הישיר של הצומת.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setHeight(int height)}}
+
+\textbf{מה היא עושה: }קובעת את הגובה של הצומת להיות \L{$height$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public int getHeight()}}
+
+\textbf{מה היא עושה: }מחזירה את הגובה של הצומת.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setSize(int size)}}
+
+\textbf{מה היא עושה: }קובעת את כמות הצמתים בתת-העץ ששורשו הוא הצומת
+הנוכחי להיות \L{$size$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public int getSize()}}
+
+\textbf{מה היא עושה: }מחזירה את כמות הצמתים בתת-העץ ששורשו הוא הצומת
+הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setSubTreeXor(boolean xor)}}
+
+\textbf{מה היא עושה: }קובעת את תוצאת פעולת \inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+על המידע של כלל הצמתים בתת-העץ ששורשו הוא הצומת הנוכחי להיות \L{$xor$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public boolean getSubTreeXor()}}
+
+\textbf{מה היא עושה: }מחזירה את תוצאת פעולת \inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+על המידע של כלל הצמתים בתת-העץ ששורשו הוא הצומת הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setSuccessor(AVLNode successor)}}
+
+\textbf{מה היא עושה: }קובעת את הצומת העוקב של הצומת הנוכחי להיות \L{$successor$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getSuccessor()}}
+
+\textbf{מה היא עושה: }מחזירה את הצומת העוקב של הצומת הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setPredecessor(AVLNode predecessor)}}
+
+\textbf{מה היא עושה: }קובעת את הצומת הקודם של הצומת הנוכחי להיות \L{$predecessor$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getPredecessor()}}
+
+\textbf{מה היא עושה: }מחזירה את הצומת הקודם של הצומת הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public int getBalanceFactor()}}
+
+\textbf{מה היא עושה: }אם הצומת הוא אמיתי, מחזירה את גורם האיזון )כפי
+שהוגדר בקורס - ההפרש בין גובה תת-העץ השמאלי של הצומת לבין גובה תת-העץ
+הימני של הצומת( של הצומת הנוכחי.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה קריאה למספר קבוע של הפעולות \inputencoding{latin9}\L{isRealNode(),
+getLeft(), getRight()}\inputencoding{cp1255} ו-\inputencoding{latin9}\L{getHeight()}\inputencoding{cp1255}
+אשר רצות ב-\L{$O\left(1\right)$} לכן סיבוכיות זמן הריצה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void updateNodeFields()}}
+
+\textbf{מה היא עושה: }מעדכנת את השדות \inputencoding{latin9}\L{height,
+subTreeSize, subTreeXor}\inputencoding{cp1255} של הצומת בהתאם לאלו
+של ילדיה בעץ.
+
+\textbf{כיצד היא פועלת:} מעדכנת את הערכים לפי הנוסחאות הרקורסיביות
+שראינו בקורס בהנחת נכונות השדות של ילדיה.\\
+שדה הגובה מעודכן להיות המקסימום בין גבהי ילדיו ועוד אחד )עבור הצומת
+עצמו(.\\
+שדה הגודל מעודכן להיות סכום גדלי תתי-העצים שילדי הצומת הם שורשיהם,
+ועוד אחד )עבור הצומת עצמו(.\\
+שדה ה-\inputencoding{latin9}\L{xor}\inputencoding{cp1255} מעודכן להיות
+תוצאת פעולה \inputencoding{latin9}\L{xor}\inputencoding{cp1255} על
+שדות \inputencoding{latin9}\L{xor}\inputencoding{cp1255} תתי-העצים
+של ילדיו וכן על המידע של הצומת עצמו.
+
+\textbf{סיבוכיות זמן הריצה:} מתבצע מספר קבוע של השמות, שימוש במספר
+קבוע של פעולות \inputencoding{latin9}\L{''get''}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{''set''}\inputencoding{cp1255} של המחלקה
+\inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255} וכן מספר קבוע
+של פעולות אריתמטיות ופעולות \inputencoding{latin9}\L{xor}\inputencoding{cp1255}.
+כל אלו מתבצעים ב-\L{$O\left(1\right)$} זמן, ולכן סיבוכיות זמן הריצה
+הכוללת של הפעולה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public int getChildCount()}}
+
+\textbf{מה היא עושה: }מחזירה את כמות הילדים הישירים של הצומת בעץ.
+
+\textbf{כיצד היא פועלת:} עבור כל אחד משני ילדיה, בודקת האם הוא צומת
+וריטואלי או צומת אמיתי. אם הוא צומת אמיתי, מוסיפה אחד למניין הילדים.
+
+\textbf{סיבוכיות זמן הריצה:} מתבצע מספר קבוע של השמות, ושימוש בפעולות
+\inputencoding{latin9}\L{getLeft(), getRight()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{isRealNode()}\inputencoding{cp1255}, כולם
+ב-\L{$O\left(1\right)$}. לכן סיבוכיות זמן הריצה הכוללת של הפעולה
+היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public boolean isLeftChild()}}
+
+\textbf{מה היא עושה: }מחזירה האם הצומת הוא בן שמאלי של אביו הישיר.
+
+\textbf{כיצד היא פועלת:} בודקת האם המפתח של הצומת קטן מהמפתח של צומת
+האב. אם כן, לפי הגדרת עץ חיפוש בינארי, הצומת הוא בן שמאלי, ולכן מחזירה
+\inputencoding{latin9}\L{true}\inputencoding{cp1255}. אחרת, סימן שהצומת
+הוא בן ימני, ולכן מחזירה \inputencoding{latin9}\L{false}\inputencoding{cp1255}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנו שימוש בפעולות \inputencoding{latin9}\L{getKey()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{getParent()}\inputencoding{cp1255} אשר
+רצים ב-\L{$O\left(1\right)$}. לכן סיבוכיות זמן הריצה הכוללת של הפעולה
+היא \L{$O\left(1\right)$}.
+
+\section{המחלקה \L{AVLTree}}
+
+\subsection{שדות המחלקה:}
+\begin{enumerate}
+\item הקבוע הפרטי \L{$virtualNode$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מצביע לצומת הוירטואלי של העץ.
+\item המשתנה הפרטי \L{$root$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מצביע לשורש של העץ.
+\item המשתנה הפרטי \L{$minNode$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מצביע לצומת בעל המפתח המינימלי מבין המפתחות של כלל הצמתים )לא
+וירטואליים( של העץ. אם העץ הוא עץ ריק, \L{$minNode$} מצביע לערך \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+\item המשתנה הפרטי \L{$maxNode$} מסוג \inputencoding{latin9}\L{AVLNode}\inputencoding{cp1255}
+אשר מצביע לצומת בעל המפתח המקסימלי מבין המפתחות של כלל הצמתים )לא
+וירטואליים( של העץ. אם העץ הוא עץ ריק, \L{$maxNode$} מצביע לערך \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+\end{enumerate}
+
+\subsection{בנאי המחלקה:}
+
+\subsubsection{הבנאי הריק \L{public AVLTree()}}
+
+ללא מימוש, יוצר אובייקט מטיפוס \inputencoding{latin9}\L{AVLTree}\inputencoding{cp1255}
+אשר ניתן להתחיל להכניס אליו מפתחות ומידע בעזרת הפעולה \inputencoding{latin9}\L{insert(int
+k, boolean i)}\inputencoding{cp1255}.
+
+\subsection{פעולות המחלקה:}
+
+\subsubsection{הפעולה \L{public AVLNode getVirtualNode()}}
+
+\textbf{מה היא עושה: }מחזירה את הצומת הוירטואלי של העץ.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getRoot()}}
+
+\textbf{מה היא עושה: }מחזירה את השורש של העץ.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setRoot(AVLNode root)}}
+
+\textbf{מה היא עושה: }קובעת את שורש העץ להיות \L{$root$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public boolean empty()}}
+
+\textbf{מה היא עושה: }מחזירה האם העץ הוא ריק )או באופן שקול, האם שורשו
+הוא \inputencoding{latin9}\L{null}\inputencoding{cp1255}(.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה קריאה לפעולה \inputencoding{latin9}\L{getRoot()}\inputencoding{cp1255}
+שרצה ב-\L{$O\left(1\right)$} וכן פעולת השוואה אחת, לכן סיבוכיות זמן
+הריצה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public int size()}}
+
+\textbf{מה היא עושה: }מחזירה את כמות הצמתים בעץ )או באופן שקול את
+גודל תת-העץ ששורשו הוא שורש העץ, או \L{$0$} אם לא קיים שורש(.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה קריאה לפעולות \inputencoding{latin9}\L{getRoot()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{getSize()}\inputencoding{cp1255} שרצות
+ב-\L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getMin()}}
+
+\textbf{מה היא עושה: }מחזירה את הצומת בעל המפתח המינימלי מבין המפתחות
+של כלל הצמתים )לא וירטואליים( של העץ. אם העץ הוא עץ ריק, מחזירה \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setMin(AVLNode min)}}
+
+\textbf{מה היא עושה: }קובעת את הצומת בעל המפתח המינימלי מבין המפתחות
+של כלל הצמתים )לא וירטואליים( של העץ להיות \L{$min$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode getMax()}}
+
+\textbf{מה היא עושה: }מחזירה את הצומת בעל המפתח המקסימלי מבין המפתחות
+של כלל הצמתים )לא וירטואליים( של העץ. אם העץ הוא עץ ריק, מחזירה \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void setMax(AVLNode max)}}
+
+\textbf{מה היא עושה: }קובעת את הצומת בעל המפתח המקסימלי מבין המפתחות
+של כלל הצמתים )לא וירטואליים( של העץ להיות \L{$max$}.
+
+\textbf{סיבוכיות זמן הריצה: }ישנה גישה אחת לשדה לכן \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode searchNode(int k)}}
+
+\textbf{מה היא עושה:} מחזירה את הצומת בעץ )כאשר נתון שהעץ לא ריק(
+עם המפתח \L{$k$}, אם קיים צומת כזה. אם לא קיים בעץ צומת עם מפתח \L{$k$},
+הפעולה מחזירה את הצומת שאמור להיות האבא הישיר של עלה עם מפתח \L{$k$}.
+
+\textbf{כיצד היא פועלת:} מבצעת חיפוש של \L{$k$} בעץ חיפוש בינארי
+)\textquotedblleft מתקדמת\textquotedblleft{} שמאלה או ימינה בעץ בהתאם
+להשוואה בין מפתח של צומת נוכחי לבין \L{$k$}(. אם נמצא צומת עם המפתח
+\L{$k$}, מחזירה אותו. אילו הצומת הבא אליו אמורים \textquotedblleft להתקדם\textquotedblleft{}
+בלולאה הוא צומת וירטואלי, סימן שלא קיים כזה צומת עם מפתח \L{$k$}
+בעץ, ומוחזר הצומת האחרון בו פגשנו בלולאה )אילו היה צומת עם מפתח \L{$k$}
+בעץ בתור עלה, צומת זה היה אביו, שכן המסלול שהלולאה עברה הוא המסלול
+בו הייתה עוברת במקרה זה(.
+
+\textbf{סיבוכיות זמן הריצה:} חיפוש בעץ חיפוש בינארי עובר במסלול מהשורש
+אל עלה בעץ, מסלול שאורכו לכל היותר \L{$h+1$} כאשר \L{$h$} הוא גובה
+העץ, וכן בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255} מתקיים
+\L{$h=O\left(\log n\right)$}. לכן, הפעולה \inputencoding{latin9}\L{searchNode(int
+k)}\inputencoding{cp1255} מבצעת לכל היותר \L{$O\left(\log n\right)$}
+איטרציות, ובכל איטרציה מתבצעה מספר פעולות שכפי שראינו סיבוכיות זמן
+הריצה שלהן הוא \L{$O\left(1\right)$} )כמו גם הסיבוכיות של הפעולה
+\inputencoding{latin9}\L{getRoot}\inputencoding{cp1255} שמתבצעת לפני
+הלולאה(. לכן סיבוכיות זמן הריצה הכוללת היא \L{$O\left(\log n\right)$}.
+
+\subsubsection{הפעולה \L{public Boolean search(int k)}}
+
+\textbf{מה היא עושה:} מחזירה את הצומת בעץ עם המפתח \L{$k$}, אם קיים
+צומת כזה. אם לא קיים בעץ צומת עם מפתח \L{$k$}, הפעולה מחזירה \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+
+\textbf{כיצד היא פועלת:} אם העץ ריק, הפעולה מחזירה \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+אחרת, משתמשת בצומת \L{$node$} שהוחזר מהפעולה \inputencoding{latin9}\L{searchNode(int
+k)}\inputencoding{cp1255}. אילו ערך המפתח של \L{$node$} הוא \L{$k$},
+מוחזר את המידע של הצומת. אחרת, המשמעות היא שלא נמצא בעץ צומת עם מפתח
+\L{$k$}, ומוחזר \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+
+\textbf{סיבוכיות זמן הריצה:} חוץ מהקריאה היחידה לפעולה \inputencoding{latin9}\L{searchNode(int
+k)}\inputencoding{cp1255} אשר מתבצעת ב-\L{$O\left(\log n\right)$}
+זמן, כלל הפעולות מתבצעות ב-\L{$O\left(1\right)$}. לכן סיבוכיות הזמן
+הכוללת של הפעולה היא \L{$O\left(\log n\right)$}.
+
+\subsubsection{הפעולה \L{public int insert(int k, boolean i)}}
+
+\textbf{מה היא עושה:} מכניסה צומת חדש לעץ עם מפתח \L{$k$} ומידע \L{$i$},
+אם לא קיים צומת כזה ומחזירה את כמות פעולות האיזון שבוצעו כולל פעולת
+ההכנסה. אם קיים בעץ צומת עם מפתח \L{$k$}, הפעולה מחזירה \L{$-1$}.
+
+\textbf{כיצד היא פועלת:} 
+\begin{enumerate}
+\item העץ ריק:
+
+יוצרת צומת חדש ומגדירה אותו בתור השורש, האיבר המינימלי והמקסימלי.
+\item העץ לא ריק:
+
+משתמשת ב \inputencoding{latin9}\L{\textbf{searchNode(int k)}}\inputencoding{cp1255}\textbf{
+}כדי למצוא את הצומת שאמור להיות אביו של הצומת החדש, ומכניסה את הצומת
+החדש בתור בנו בעזרת \inputencoding{latin9}\L{updateRelationsForNewLeftChild(AVLNode
+parent, AVLNode newNode)}\inputencoding{cp1255} או \inputencoding{latin9}\L{updateRelationsForNewRightChild(AVLNode
+parent, AVLNode newNode)}\inputencoding{cp1255} ולאחר מכן נאזן את
+העץ בעזרת \inputencoding{latin9}\L{balanceTreeOnce(AVLNode node)}\inputencoding{cp1255}
+פעם אחת עך ידי קריאה יחידה )או שתיים במידה ונדרשה פעולת איזון(.
+\end{enumerate}
+\textbf{סיבוכיות זמן הריצה:} ב\textquotedblleft מקרה הטוב\textquotedblleft{}
+הראינו כי \inputencoding{latin9}\L{empty()}\inputencoding{cp1255},
+\inputencoding{latin9}\L{setRoot(AVLNode root)}\inputencoding{cp1255},
+\inputencoding{latin9}\L{setMin(AVLNode min)}\inputencoding{cp1255},
+\inputencoding{latin9}\L{setMax(AVLNode max)}\inputencoding{cp1255}
+רצות ב\L{$O\left(1\right)$} לכן סה\textquotedblleft כ \L{$O\left(1\right)$}.
+ב\textquotedblleft מקרה הגרוע\textquotedblleft{} ישנן מספר קריאות למתודות
+אחרות בקוד - קריאה ל\inputencoding{latin9}\L{searchNode(int k)}\inputencoding{cp1255}
+אשר מתבצעת ב-\L{$O\left(\log n\right)$} זמן וקריאה ל\inputencoding{latin9}\L{balanceTreeOnce(AVLNode
+node)}\inputencoding{cp1255} פעם או פעמיים כך שסה\textquotedblleft כ
+עוברים על העץ מהצומת הנוכחי עד שורש שזה חסום בגובה העץ לכן גם כן \L{$O\left(\log n\right)$}
+זמן ושתי הפעולות האחרות מתבצעות ב-\L{$O\left(1\right)$}. לכן סיבוכיות
+הזמן הכוללת של הפעולה היא \L{$O\left(\log n\right)$}.
+
+\subsubsection{הפעולה \L{private void updateRelationsForNewLeftChild(AVLNode parent,
+AVLNode newNode)}}
+
+\textbf{מה היא עושה:} מגדירה את \inputencoding{latin9}\L{newNode}\inputencoding{cp1255}
+בתור בנו השמאלי של \inputencoding{latin9}\L{node}\inputencoding{cp1255}
+תוך התחשבות במקרי הקצה ועדכון המצביעים הרלוונטים.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות \inputencoding{latin9}\L{setLeft(AVLNode
+node)}\inputencoding{cp1255}, \inputencoding{latin9}\L{getMin()}\inputencoding{cp1255},
+\inputencoding{latin9}\L{setMin(AVLNode min)}\inputencoding{cp1255},
+\inputencoding{latin9}\L{updateSuccessor(AVLNode node, AVLNode newNode)}\inputencoding{cp1255}
+מתבצעות בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private void updateRelationsForNewRightChild(AVLNode parent,
+AVLNode newNode)}}
+
+\textbf{מה היא עושה:} מגדירה את \inputencoding{latin9}\L{newNode}\inputencoding{cp1255}
+בתור בנו הימני של \inputencoding{latin9}\L{node}\inputencoding{cp1255}
+תוך התחשבות במקרי הקצה ועדכון המצביעים הרלוונטים.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות \inputencoding{latin9}\L{setRight(AVLNode
+node)}\inputencoding{cp1255}, \inputencoding{latin9}\L{getMax()}\inputencoding{cp1255},
+\inputencoding{latin9}\L{setMax(AVLNode min)}\inputencoding{cp1255},
+\inputencoding{latin9}\L{updateSuccessor(AVLNode node, AVLNode newNode)}\inputencoding{cp1255}
+מתבצעות בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private AVLNode balanceTreeOnce(AVLNode node)}}
+
+\textbf{מה היא עושה:} עולה מהצומת המועבר אל השורש עד שהיא נתקלת בצומת
+לא מאוזן, מאזנת אותו ומחזירה את אביו. אם העץ מאוזן הפעולה תחזיר את
+הצומת הוירטואלי.
+
+\textbf{סיבוכיות זמן הריצה: }הפעולה עולה במסלול ישיר אל הצומת הלא
+מאוזן )או לחילופין השורש( עם פעולות \L{$O\left(1\right)$} לכןחלק
+זה הוא חסום באורך המסלול מהצומת הנתון אל הצומת שצריך איזון. בנוסף,
+הראינו כי הפעולות \inputencoding{latin9}\L{setLeft(AVLNode node)}\inputencoding{cp1255},
+\inputencoding{latin9}\L{getMin()}\inputencoding{cp1255}, \inputencoding{latin9}\L{setMin(AVLNode
+min)}\inputencoding{cp1255}, \inputencoding{latin9}\L{updateSuccessor(AVLNode
+node, AVLNode newNode)}\inputencoding{cp1255} מתבצעות בסיבוכיות זמן
+\L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private void balanceNode(AVLNode node)}}
+
+\textbf{מה היא עושה:} מפעילה את פעולת האיזון המתאימה על הצומת לפי
+החוקיות שראינו בכיתה.
+
+\textbf{סיבוכיות זמן הריצה: }הפונקציה קוראת לאחת מארבע פעולות האיזון
+\begin{itemize}
+\item המתודה \inputencoding{latin9}\L{rotateRight(AVLNode node)}
+\inputencoding{cp1255}%
+\item המתודה \inputencoding{latin9}\L{rotateLeft(AVLNode node)}
+\inputencoding{cp1255}%
+\item המתודה \inputencoding{latin9}\L{rotateLeftThenRight(AVLNode node)}
+\inputencoding{cp1255}%
+\item המתודה \inputencoding{latin9}\L{rotateRightThenLeft(AVLNode node)}\inputencoding{cp1255} 
+\end{itemize}
+ומבצעת שאילתות 
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getBalanceFactor()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getLeft()}
+\end{itemize}
+ב-\L{$O\left(1\right)$} לכן סך הפעולות הוא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private boolean isUnbalanced(AVLNode node)}}
+
+\textbf{מה היא עושה:} מחזירה האם גורם האיזון של הצומת בטווח המתאים.
+
+\textbf{סיבוכיות זמן הריצה: }מבצעת שאילתת \inputencoding{latin9}\L{getBalanceFactor()}\inputencoding{cp1255}
+ב-\L{$O\left(1\right)$} לכן סך הפעולות הוא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private void rotateInDir(AVLNode node, Direction dir)}}
+
+\textbf{מה היא עושה:} מבצעת פעולת איזון מסוג סיבוב יחיד ימינה או שמאלה
+בהינתן הכיוון \inputencoding{latin9}\L{dir}\inputencoding{cp1255}.
+
+\textbf{כיצד היא פועלת: }פועלת לפי האלגוריתם שראינו בכיתה אך בכלליות
+לשני הכיוונים: תחילה מעבירה את הילד המתאים, מתקנת מצביעים, מתקנת נכונות
+שדות ולבסוף מוודאת כי המצביע לשורש הוא נכון.
+
+\textbf{סיבוכיות זמן הריצה: }ישנן קריאות לשאילותות ומתודות הרצות בסיבוכיות
+\L{$O\left(1\right)$}
+
+השאילתות:
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getDirectionFromParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{reverseDir()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getChildInDir(Direction dir)}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getRoot()}
+\end{itemize}
+הפעולות
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{setChildInDir(AVLNode node, Direction
+dir)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{updateNodeFields()}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setRoot(AVLNode root)}
+\end{itemize}
+
+\subsubsection{הפעולה \L{private void rotateRight(AVLNode node)}}
+
+\textbf{מה היא עושה:} מבצעת סיבוב יחיד ימינה מהצומת הנתון.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולה \inputencoding{latin9}\L{rotateInDir(AVLNode
+node, Direction dir)}\inputencoding{cp1255} מתבצעת בסיבוכיות זמן \L{$O\left(1\right)$},
+לכן סיבוכיות זמן הריצה הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private void rotateLeft(AVLNode node)}}
+
+\textbf{מה היא עושה:} מבצעת סיבוב יחיד שמאלה מהצומת הנתון.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולה \inputencoding{latin9}\L{rotateInDir(AVLNode
+node, Direction dir)}\inputencoding{cp1255} מתבצעת בסיבוכיות זמן \L{$O\left(1\right)$},
+לכן סיבוכיות זמן הריצה הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private void rotateLeftThenRight(AVLNode node)}}
+
+\textbf{מה היא עושה:} מבצעת סיבוב שמאלה וימינה מהצומת הנתון.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{rotateRight(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{rotateLeft(AVLNode node)}\inputencoding{cp1255} 
+\end{itemize}
+מתבצעות בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private void rotateRightThenLeft(AVLNode node)}}
+
+\textbf{מה היא עושה:} מבצעת סיבוב ימינה ושמאלה מהצומת הנתון.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{rotateRight(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{rotateLeft(AVLNode node)}\inputencoding{cp1255} 
+\end{itemize}
+מתבצעות בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public int delete(int k)}}
+
+\textbf{מה היא עושה:} מוחקת את הצומת בעל המפתח הנתון מהעץ אם הוא קיים
+ומחזירה את כמות פעולות האיזון שנדרשו לאיזון העץ, או \L{$-1$} אם הצומת
+המתאים לא נמצא בעץ.
+
+\textbf{כיצד היא פועלת:} תחילה הפעולה מוצאת את הצומת בעל המתפח הנתון,
+אם הוא קיים, מעדכנת את המצביעים של העוקב והקודם שלו באמצעות \inputencoding{latin9}\L{updateSuccessor(AVLNode
+node, AVLNode newNode)}\inputencoding{cp1255} ולאחר מכן נוקטת באחד
+מששת המקרים המתאימים:
+\begin{enumerate}
+\item הצומת הוא השורש וללא הילידם - משמע הוא הצומת היחידי בעץ
+
+נגדיר את העץ למצב של עץ \textquotedblleft חדש\textquotedblleft{} ללא
+צמתים ונחזיר \L{$1$} כנגד המחיקה היחדה שבוצעה.
+
+האיפוס יתבצע באמצעות הפעולות:
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{setRoot(AVLNode root)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setMin(AVLNode min)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setMax(AVLNode max)}
+\end{itemize}
+אשר כל אחת פועלת ב-\L{$O\left(1\right)$} בסיבוכיות כוללת של \L{$O\left(1\right)$}.
+\item הצומת הוא המינימום בעץ:
+
+נעדכן את המינימום בעץ להיות העוקב של הצומת ונבצע מעקף עם בנו הימני
+- הבן היחידי שיכול להיות לו - אם אין לו בן אז הוא הלכה למעשה מוחלף
+בצומת וירטואלי פשוט כמו מחיקת עלה מעץ.
+
+זאת באמצעות השאילתות:
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getSuccessor()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getRight()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getParent()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getRoot()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getVirtualNode()}
+\end{itemize}
+אשר כולן בסיבוכיות \L{$O\left(1\right)$} והפעולות:
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{setMin(AVLNode min)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setLeft(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\end{itemize}
+אשר גם הן בסיבוכיות \L{$O\left(1\right)$} ולכן הסיבוכיות הכוללת היא
+\L{$O\left(1\right)$}.
+\item הצומת הוא המקסימום בעץ:
+
+נעדכן את המקסימום בעץ להיות הקודם של הצומת ונבצע מעקף עם בנו השמאלי
+- הבן היחידי שיכול להיות לו - אם אין לו בן אז הוא הלכה למעשה מוחלף
+בצומת וירטואלי פשוט כמו מחיקת עלה מעץ.
+
+זאת באמצעות השאילתות:
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getPredecessor()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getLeftt()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getParent()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getRoot()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getVirtualNode()}
+\end{itemize}
+אשר כולן בסיבוכיות \L{$O\left(1\right)$} והפעולות:
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{setMax(AVLNode min)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setRight(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\end{itemize}
+אשר גם הן בסיבוכיות \L{$O\left(1\right)$} ולכן הסיבוכיות הכוללת היא
+\L{$O\left(1\right)$}.
+\item הצומת לא השורש והוא אינו המינימום או המקסימום בעץ:
+\begin{enumerate}
+\item לצומת בן יחיד:
+
+נבצע מעקף עם בן זה.
+
+נשתמש בשאילתות
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getLeft()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{isRealNode()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getChildInDir(Direction dir)}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getParent()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getDirectionFromParent(AVLNode node)}
+\end{itemize}
+והפעולות:
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{setChildInDir(AVLNode node, Direction
+dir)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\end{itemize}
+\item לצומת שני בנים:
+
+מאחר והקודם לצומת חייב להיות בתת העץ של אותו הצומת מאחר ויש לצומת
+שני ילדים נובע כי הקודם נמצא בתת העץ השמאלי ויתר על כן לא ייתכן כי
+יש לו ילד ימני אחרת הוא או ילד ימני שלו היה הקודם לכן נוכל לבצע מעקף
+לצומת הקודם ולאחר ש\textquotedblleft שחררנו\textquotedblleft{} אותו
+נחליף איתו את הצומת אותו אנו רוצים למחוק. לבסוף נבצע מעקף מהאב של
+הקודם או במקרה וזה בנו השמאלי של הצומת אז מהאיבר הקודם.
+
+נבצע זאת באמצעות השאילתות:
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getPredecessor()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getParent()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getLeft()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getDirectionFromParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getRoot()}
+\end{itemize}
+והפעולות:
+\begin{itemize}
+\item הפעולה \inputencoding{latin9}\L{setChildInDir(AVLNode node, Direction
+dir)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{replaceChildren(AVLNode oldParent,
+AVLNode newParent)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setChildInDir(AVLNode node, Direction
+dir)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setRoot(AVLNode root)}
+\end{itemize}
+ראינו כי כלל הפעולות והשאילתות מתבצעות בסיבוכיות \L{$O\left(1\right)$}.
+\item הצומת הוא עלה בעץ:
+
+נבצע מעקף עם הבן שלו שהוא צומת וירטואלי.
+
+זאת באמצעות השאילתות:
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getParent()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getDirectionFromParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getVirtualNode()}
+\end{itemize}
+והפעולה \inputencoding{latin9}\L{setChildInDir(AVLNode node, Direction
+dir)}\inputencoding{cp1255} אשר כולן רצות בסיבוכיות \L{$O\left(1\right)$}.
+\end{enumerate}
+\end{enumerate}
+ובסיום רצה הפעולה \inputencoding{latin9}\L{balanceNode(AVLNode node)}\inputencoding{cp1255}.
+
+ראינו כי כלל הפעולות והשאילתות מתבצעות בסיבוכיות \L{$O\left(1\right)$}
+למעט \inputencoding{latin9}\L{balanceNode(AVLNode node)}\inputencoding{cp1255}
+הרצה בסיבוכיות \L{$O\left(\log n\right)$} לכן הפעולה רצה בסיבוכיות
+\L{$O\left(\log n\right)$}.
+
+\subsubsection{הפעולה \L{private void replaceChildren(AVLNode oldParent, AVLNode
+newParent)}}
+
+\textbf{מה היא עושה:} מעבירה את ילדי \inputencoding{latin9}\L{oldParent}\inputencoding{cp1255}
+להיות ילדי \inputencoding{latin9}\L{newParent}\inputencoding{cp1255}.
+
+\textbf{כיצד היא פועלת:} קוראת לפעולות \inputencoding{latin9}\L{setRight(AVLNode
+node)}\inputencoding{cp1255}, \inputencoding{latin9}\L{setLeft(AVLNode
+node)}\inputencoding{cp1255} על מנת להגדיר את ילדי \inputencoding{latin9}\L{oldParent}\inputencoding{cp1255}
+להיות ילדי \inputencoding{latin9}\L{newParent}\inputencoding{cp1255}
+ואז משתמשת ב\inputencoding{latin9}\L{setParent(AVLNode node)}\inputencoding{cp1255}
+על מנת להגיד את \inputencoding{latin9}\L{newParent}\inputencoding{cp1255}
+בתור ההורה של ילדי \inputencoding{latin9}\L{oldParent}\inputencoding{cp1255}.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות 
+\begin{itemize}
+\item השאילתה \inputencoding{latin9}\L{getRight()}
+\inputencoding{cp1255}%
+\item השאילתה \inputencoding{latin9}\L{getLeft()}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setParent(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setRight(AVLNode node)}
+\inputencoding{cp1255}%
+\item הפעולה \inputencoding{latin9}\L{setLeft(AVLNode node)}
+\end{itemize}
+מתבצעות בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private Direction getDirectionFromParent(AVLNode node)}}
+
+\textbf{מה היא עושה:} מחזירה את הכיוון באופן יחסי לאבא של הצומת, אם
+הצומת הנתון הוא השורש הכיוון שיוחזר הוא ימינה.
+
+\textbf{כיצד היא פועלת:} קוראת ל\inputencoding{latin9}\L{isLeftChild()}\inputencoding{cp1255}
+ולפי ערך ההחזרה שלו מחזירה את הכיוון המתאים.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולה \inputencoding{latin9}\L{isLeftChild()}\inputencoding{cp1255}
+מתבצעת בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{private int balanceTree(AVLNode node)}}
+
+\textbf{מה היא עושה:} מאזנת את העץ מהצומת הנתון ועד לשורש, בסיום מחזירה
+את כמות פעולות האיזון )ועוד אחת( שהתבצעו.
+
+\textbf{כיצד היא פועלת:} מתחילה מהצומת הנתון וממשיכה בלולאה עד שהיא
+מגיעה לאבא של השורש )הצומת הוירטואלי( בקריאה ל \inputencoding{latin9}\L{balanceTreeOnce(AVLNode
+node)}\inputencoding{cp1255} ומגדילה ב\L{$1$} את המונה.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולה \inputencoding{latin9}\L{balanceTreeOnce(AVLNode
+node)}\inputencoding{cp1255} מתבצעת בסיבוכיות אורך המסלול בין הצומת
+הנתון אל הצומת המוחזר. אנו קוראים בלולאה שוב ושוב לפעולה עם הערך המוחזר
+עד שאנו מגיעים לשורש כלומר בסיבוכיות של אורך המסלול מהצמת הנתון אל
+השורש שהיא חסומה בגובה העץ הלא הוא \L{$O\left(\log n\right)$}, לכן
+סיבוכיות זמן הריצה הכוללת היא \L{$O\left(\log n\right)$}.
+
+\subsubsection{הפעולה \L{public Boolean min()}}
+
+\textbf{מה היא עושה:} מחזירה את ערכו של האיבר בעץ בעל המפתח המינימלי,
+או \inputencoding{latin9}\L{null}\inputencoding{cp1255} אם העץ ריק.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות \inputencoding{latin9}\L{empty(),
+getMin()}\inputencoding{cp1255} ו-\inputencoding{latin9}\L{getValue()}\inputencoding{cp1255}
+מתבצעות בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public Boolean max()}}
+
+\textbf{מה היא עושה:} מחזירה את ערכו של האיבר בעץ בעל המפתח המקסימלי,
+או \inputencoding{latin9}\L{null}\inputencoding{cp1255} אם העץ ריק.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות \inputencoding{latin9}\L{empty(),
+getMax()}\inputencoding{cp1255} ו-\inputencoding{latin9}\L{getValue()}\inputencoding{cp1255}
+מתבצעות בסיבוכיות זמן \L{$O\left(1\right)$}, לכן סיבוכיות זמן הריצה
+הכוללת היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public void inOrder(AVLNode node, int offset, AVLNode{[}{]}
+arr)}}
+
+\textbf{מה היא עושה:} פעולה רקורסיבית אשר מכניסה למערך \inputencoding{latin9}\L{$arr$}\inputencoding{cp1255}
+החל מאינדקס \inputencoding{latin9}\L{$offset$}\inputencoding{cp1255}
+את הצמתים של תת-העץ ש-\inputencoding{latin9}\L{$node$}\inputencoding{cp1255}
+הוא שורשו ממוינים על פי המפתחות.
+
+\textbf{כיצד היא פועלת:} פועלת בדומה להילוך \inputencoding{latin9}\L{in-order}\inputencoding{cp1255}
+בעץ כפי שלמדנו בקורס, כאשר לאחר הקריאה הרקורסיבית לבן השמאלי, מכניסה
+כל צומת למערך \inputencoding{latin9}\L{$arr$}\inputencoding{cp1255}
+באינדקס המתאים )אינדקס שהוא תוצאת החיבור של \L{$offset$} וכמות הצמתים
+בתת-העץ שבנו השמאלי של \L{$node$} הוא שורשו, על מנת שבמקומות שבין
+\L{$offset$} לאינדקס זה יוכנסו למערך כל הצמתים בתת-העץ שבנו השמאלי
+של \L{$node$} הוא שורשו, שאלו כל הצמתים שקטנים מ-\L{$node$} בתת-העץ
+ש-\L{$node$} הוא שורשו(. לאחר ההכנסה למערך, מתבצעת קריאה רקורסיבית
+לבן הימני של \L{$node$} עם \L{$offset$} שהוא האינדקס העוקב של האינדקס
+אליו \L{$node$} הוכנס במערך.\\
+מקרה הבסיס של הפעולה הוא כאשר \L{$node$} הוא צומת שאינו אמיתי, כלומר
+צומת וירטואלי )שכן הוא מייצג \textquotedblleft סיום מסלול\textquotedblleft{}
+מהשורש לצומת בעץ(.
+
+\textbf{סיבוכיות זמן הריצה: }בכל קריאה רקורסיבית של \inputencoding{latin9}\L{inOrder(AVLNode
+node, int offset, AVLNode{[}{]} arr)}\inputencoding{cp1255} מתבצע
+מספר קבוע של קריאות לפעולות \inputencoding{latin9}\L{getLeft(), getRight()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{getSize()}\inputencoding{cp1255} אשר הראינו
+קודם כי מתבצעות ב-\L{$O\left(1\right)$} זמן. הילוך מהצורה \inputencoding{latin9}\L{in-order}\inputencoding{cp1255}
+עובר על כל הצמתים בעץ לכל היותר מספר קבוע של פעמים, לכן סיבוכיות זמן
+הריצה הכוללת של הפעולה היא \L{$O\left(n\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode{[}{]} nodesToArray()}}
+
+\textbf{מה היא עושה:} יוצרת ומחזירה מערך אשר מכיל את כלל הצמתים בעץ
+ממוינים על פי המפתחות שלהם, או מערך ריק אם העץ ריק.
+
+\textbf{כיצד היא פועלת:} יוצרת מערך כגודל העץ, ואם הוא לא ריק קוראת
+איתו ועם שורש העץ לפונקציה \inputencoding{latin9}\L{inOrder(AVLNode
+node, int offset, AVLNode{[}{]} arr)}\inputencoding{cp1255}, אשר כפי
+שהראינו מכניסה למערך \inputencoding{latin9}\L{$arr$}\inputencoding{cp1255}
+החל מאינדקס \inputencoding{latin9}\L{$0$}\inputencoding{cp1255} את
+הצמתים של העץ ממוינים על פי המפתחות.
+
+\textbf{סיבוכיות זמן הריצה: }הפעולות \inputencoding{latin9}\L{empty()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{size()}\inputencoding{cp1255}, כמו גם שאר
+הפעולות חוץ מ-\inputencoding{latin9}\L{inOrder(AVLNode node, int offset,
+AVLNode{[}{]} arr)}\inputencoding{cp1255}, מתבצעות ב-\L{$O\left(1\right)$}
+זמן, ואילו \inputencoding{latin9}\L{inOrder(AVLNode node, int offset,
+AVLNode{[}{]} arr)}\inputencoding{cp1255} מתבצעת ב-\L{$O\left(n\right)$}
+זמן. לכן סיבוכיות זמן הריצה הכוללת של הפעולה היא \L{$O\left(n\right)$}.
+
+\subsubsection{הפעולה \L{public int{[}{]} keysToArray()}}
+
+\textbf{מה היא עושה:} מחזירה מערך ממוין המכיל את כל המפתחות בעץ, או
+מערך ריק אם העץ ריק.
+
+\textbf{כיצד היא פועלת:} משתמשת בפעולה \inputencoding{latin9}\L{nodesToArray()}\inputencoding{cp1255}
+על מנת לקבל מערך של הצמתים בעץ ממוינים על פי המפתחות שלהם, ולאחר מכן
+בעזרת לולאה מכניסה את המפתחות בסדר הממוין למערך \L{$arr$}.
+
+\textbf{סיבוכיות זמן הריצה: }הפעולות \inputencoding{latin9}\L{empty()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{size()}\inputencoding{cp1255} מתבצעות ב-\L{$O\left(1\right)$}
+זמן, ואילו \inputencoding{latin9}\L{nodesToArray()}\inputencoding{cp1255}
+כמו גם הלולאה מתבצעות ב-\L{$O\left(n\right)$} זמן. לכן סיבוכיות זמן
+הריצה הכוללת של הפעולה היא \L{$O\left(n\right)$}.
+
+\subsubsection{הפעולה \L{public boolean{[}{]} infoToArray()}}
+
+\textbf{מה היא עושה:} מחזירה מערך בוליאנים המכיל את כל הערכים בעץ,
+ממויינים על פי סדר המפתחות, או מערך ריק אם העץ ריק.
+
+\textbf{כיצד היא פועלת:} משתמשת בפעולה \inputencoding{latin9}\L{nodesToArray()}\inputencoding{cp1255}
+על מנת לקבל מערך של הצמתים בעץ ממוינים על פי המפתחות שלהם, ולאחר מכן
+בעזרת לולאה מכניסה את הערכים שלהם בסדר הממוין למערך \L{$arr$}.
+
+\textbf{סיבוכיות זמן הריצה: }הפעולות \inputencoding{latin9}\L{empty()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{size()}\inputencoding{cp1255} מתבצעות ב-\L{$O\left(1\right)$}
+זמן, ואילו \inputencoding{latin9}\L{nodesToArray()}\inputencoding{cp1255}
+כמו גם הלולאה מתבצעות ב-\L{$O\left(n\right)$} זמן. לכן סיבוכיות זמן
+הריצה הכוללת של הפעולה היא \L{$O\left(n\right)$}.
+
+\subsubsection{הפעולה \L{public boolean prefixXor(int k)}}
+
+\textbf{מה היא עושה:} מקבלת מפתח \L{$k$} כאשר נתון ש-\L{$k$} נמצא
+במבנה ומחזירה את תוצאת פעולת \inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+על הערכים הבוליאניים הנמצאים במבנה תחת מפתחות שקטנים או שווים ל-\L{$k$}.
+
+\textbf{כיצד היא פועלת:} מבצעת הילוך בעץ במסלול שבין השורש לבין הצומת
+עם המפתח \L{$k$}. אם הצומת הנוכחי הוא עם מפתח גדול יותר מ-\L{$k$},
+ממשיכים במסלול )ולא מחשבים אותו כחלק מ-\inputencoding{latin9}\L{xor}\inputencoding{cp1255}(.
+אם הצומת הנוכחי הוא עם מפתח קטן או שווה ל-\L{$k$}, נחשב את הערכים
+הבוליאניים שלו ושל הצמתים בתת-העץ השמאלי שלו ב-\inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+)בעזרת הפעולה \inputencoding{latin9}\L{getSubTreeXor()}\inputencoding{cp1255}(,
+שכן כל אלו הם צמתים עם מפתחות קטנים מ-\L{$k$}. כל הצמתים עם המפתחות
+שקטנים מ-\L{$k$} הם כל שנמצאים בעץ \textquotedblleft משמאל\textquotedblleft{}
+למסלול בין השורש לבין הצומת עם המפתח \L{$k$} )כולל משמאל לצומת עם
+המפתח \L{$k$} עצמו(.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות \inputencoding{latin9}\L{getRoot(),
+getKey(), getLeft(), getRight(), getValue()}\inputencoding{cp1255}
+ו-\inputencoding{latin9}\L{getSubTreeXor}\inputencoding{cp1255} הן
+פעולות המתבצעות ב-\L{$O\left(1\right)$} זמן. לפי ההסבר של הפעולה,
+הלולאה מבצעת לכל היותר \L{$h+1$} כאשר \L{$h$} הוא גובה העץ )שכן
+זהו אורך המסלול הארוך ביותר בין שורש לצומת בעץ(, וכן בעץ \inputencoding{latin9}\L{AVL}\inputencoding{cp1255}
+מתקיים \L{$h=O\left(\log n\right)$}. לכן סיבוכיות זמן הריצה הכוללת
+היא \L{$O\left(\log n\right)$}.
+
+\subsubsection{הפעולה \L{public AVLNode successor(AVLNode node)}}
+
+\textbf{מה היא עושה:} מקבלת צומת בעץ כקלט ומחזירה את העוקב שלו. אם
+לא קיים עוקב, מחזירה \inputencoding{latin9}\L{null}\inputencoding{cp1255}.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולה \inputencoding{latin9}\L{getSuccessor()}\inputencoding{cp1255}
+היא פעולה המתבצעת ב-\L{$O\left(1\right)$} זמן, לכן סיבוכיות זמן הריצה
+היא \L{$O\left(1\right)$}.
+
+\subsubsection{הפעולה \L{public boolean succPrefixXor(int k)}}
+
+\textbf{מה היא עושה:} מקבלת מפתח \L{$k$} כאשר נתון ש-\L{$k$} נמצא
+במבנה ומחזירה את תוצאת פעולת \inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+על הערכים הבוליאניים הנמצאים במבנה תחת מפתחות שקטנים או שווים ל-\L{$k$}.
+
+\textbf{כיצד היא פועלת:} מתחילה מהצומת המינימלי של העץ, ומבצעת עליו
+פעולות \inputencoding{latin9}\L{successor(AVLNode node)}\inputencoding{cp1255}
+עד שמגיעה לצומת בעל המפתח \L{$k$}. עבור כל צומת שהתקבל בפעולות ה-\inputencoding{latin9}\L{successor(AVLNode
+node)}\inputencoding{cp1255} )וכן הצומת המינימלי עצמו(, הפעולה מחשבת
+\inputencoding{latin9}\L{xor}\inputencoding{cp1255} עם ערכו הבוליאני,
+ולבסוף מחזירה את התוצאה.
+
+\textbf{סיבוכיות זמן הריצה: }הראינו כי הפעולות \inputencoding{latin9}\L{getMin(),
+getKey()}\inputencoding{cp1255} ו-\inputencoding{latin9}\L{getValue()}\inputencoding{cp1255}
+הן פעולות המתבצעות ב-\L{$O\left(1\right)$} זמן. הפעולה מבצעת מספר
+איטרציות כמספר הצמתים בעץ עם מפתחות שקטנים או שווים למפתח \L{$k$},
+ובכל איטרציה מבצעת פעולת \inputencoding{latin9}\L{xor}\inputencoding{cp1255}
+ופעולת \inputencoding{latin9}\L{successor(AVLNode node)}\inputencoding{cp1255}
+ב-\L{$O\left(1\right)$} זמן. כלומר מתבצעות לכל היותר \L{$n$} איטרציות
+)כמספר סך כל הצמתים בעץ(, לכן סיבוכיות זמן הריצה הכוללת היא \L{$O\left(n\right)$}.
+\end{document}
