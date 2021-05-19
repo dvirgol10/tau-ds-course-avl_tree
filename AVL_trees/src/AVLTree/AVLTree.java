@@ -50,6 +50,8 @@ public class AVLTree {
     private AVLNode maxNode;
 
     /**
+     * public AVLTree()
+     * <p>
      * This constructor creates an empty AVLTree.
      * <p>
      * time complexity: O(1)
@@ -80,7 +82,7 @@ public class AVLTree {
     }
 
     /**
-     * public void setRoot()
+     * public void setRoot(AVLNode root)
      * <p>
      * Sets the root AVL node.
      * <p>
@@ -125,7 +127,7 @@ public class AVLTree {
     }
 
     /**
-     * public void setMin()
+     * public void setMin(AVLNode min)
      * <p>
      * Sets the node with the minimal key to min.
      * <p>
@@ -148,7 +150,7 @@ public class AVLTree {
     }
 
     /**
-     * public void setMax()
+     * public void setMax(AVLNode max)
      * <p>
      * Sets the node with the maximal key to max.
      * <p>
@@ -191,8 +193,8 @@ public class AVLTree {
     /**
      * public Boolean search(int k)
      * <p>
-     * Returns the info of the item with key k in the tree,
-     * or null if item with key k was not found in the tree.
+     * returns the info of an item with key k if it exists in the tree
+     * otherwise, returns null
      * <p>
      * time complexity: O(log(n)) when n is the number of nodes in the tree
      */
@@ -205,41 +207,15 @@ public class AVLTree {
     }
 
     /**
-     * public int insert(int k, boolean i)
+     * protected void updateSuccessor(AVLNode node, AVLNode newNode)
      * <p>
-     * inserts an item with key k and info i to the AVL tree.
-     * the tree must remain valid (keep its invariants).
-     * returns the number of nodes which require rebalancing operations (i.e. promotions or rotations).
-     * This always includes the newly-created node.
-     * returns -1 if an item with key k already exists in the tree.
+     * updates the successor of node to be newNode and sets node as newNodes predecessor
      * <p>
-     * time complexity: O(log(n)) when n is the number of node in the tree
+     * time complexity: O(1)
      */
-    public int insert(int k, boolean i) {
-        if (this.empty()) { // if the tree is empty, initializes it with a new node with key k and info i
-            this.setRoot(new AVLNode(k, i, this.getVirtualNode()));
-            this.setMin(this.getRoot());
-            this.setMax(this.getRoot());
-            this.getRoot().setParent(this.getVirtualNode());
-            return 1;
-        }
-        AVLNode node = searchNode(k); // node is the item with key k in the tree, or the theoretical parent if an item with key k was not found in the tree.
-        if (node.getKey() == k) { // if a node with key k exists, return -1
-            return -1;
-        }
-        AVLNode newNode = new AVLNode(k, i, node);
-        if (node.getKey() > k) {
-            updateRelationsForNewLeftChild(node, newNode);
-        } else {
-            updateRelationsForNewRightChild(node, newNode);
-        }
-
-        AVLNode lastUpdatedNode = this.balanceTreeOnce(node); // balance the tree - as we seen in class, after an insertion at most one balancing operations is needed
-        if (lastUpdatedNode.isRealNode()) { // in other words, if a rotation has been performed,
-            this.balanceTreeOnce(lastUpdatedNode); // continues to update nodes in the path from the inserted node to the root
-            return 2;
-        }
-        return 1;
+    protected void updateSuccessor(AVLNode node, AVLNode newNode) {
+        newNode.setPredecessor(node);
+        node.setSuccessor(newNode);
     }
 
     /**
@@ -277,71 +253,16 @@ public class AVLTree {
     }
 
     /**
-     * protected void updateSuccessor(AVLNode node, AVLNode newNode)
+     * private Direction getDirectionFromParent(AVLNode node)
      * <p>
-     * updates the successor of node to be newNode and sets node as newNodes predecessor
-     * <p>
-     * time complexity: O(1)
-     */
-    protected void updateSuccessor(AVLNode node, AVLNode newNode) {
-        newNode.setPredecessor(node);
-        node.setSuccessor(newNode);
-    }
-
-    /**
-     * protected AVLNode balanceTreeOnce(AVLNode node)
-     * <p>
-     * updates the fields of all the nodes from the bottom of the tree until the first rotation,
-     * or until it reaches the root if no rotation has been performed.
-     * Returns the root if and only if the tree is balanced
-     * and all the nodes are up to date.
-     * <p>
-     * time complexity: O(d) when d is the of length of the path between the given node and the node that needs balancing, or the root if there is no such thing
-     */
-    protected AVLNode balanceTreeOnce(AVLNode node) {
-        while (node.isRealNode()) { // iterates up through the tree to the first unbalanced element, if the tree is balanced we exit the loop and return the virtual node
-            node.updateNodeFields(); // update size, height and subTreeXor of the node in O(1)
-            if (this.isUnbalanced(node)) {
-                this.balanceNode(node);
-                return node.getParent(); // if node is unbalanced, balance it and return it's parent that "took it's place" as a result of the rotation
-            }
-            node = node.getParent();
-        }
-        return this.getVirtualNode();
-    }
-
-    /**
-     * private void balanceNode(AVLNode node)
-     * <p>
-     * Performs balance operations (rotations) on the given node, if needed.
+     * retrieves the nodes direction from it's parent.
+     * i.e. if the node is the right child the method will return Direction.Right.
+     * if the given node is the root the returned value will be Direction.Right.
      * <p>
      * time complexity: O(1)
      */
-    private void balanceNode(AVLNode node) { // checks the cases as we learned in class that matches both insertions and deletions
-        if (node.getBalanceFactor() == 2) {
-            if (node.getLeft().getBalanceFactor() == -1) {
-                this.rotateLeftThenRight(node);
-            } else if (node.getLeft().getBalanceFactor() == 1 || node.getLeft().getBalanceFactor() == 0) {
-                this.rotateRight(node);
-            }
-        } else if (node.getBalanceFactor() == -2) {
-            if (node.getRight().getBalanceFactor() == -1 || node.getRight().getBalanceFactor() == 0) {
-                this.rotateLeft(node);
-            } else if (node.getRight().getBalanceFactor() == 1) {
-                this.rotateRightThenLeft(node);
-            }
-        }
-    }
-
-    /**
-     * private boolean isUnbalanced(AVLNode node)
-     * <p>
-     * return true if and only if the node is unbalanced.
-     * <p>
-     * time complexity: O(1)
-     */
-    private boolean isUnbalanced(AVLNode node) {
-        return node.getBalanceFactor() > 1 || node.getBalanceFactor() < -1;
+    private Direction getDirectionFromParent(AVLNode node) {
+        return node.isLeftChild() ? Direction.Left : Direction.Right;
     }
 
     /**
@@ -418,6 +339,133 @@ public class AVLTree {
     private void rotateRightThenLeft(AVLNode node) {
         rotateRight(node.getRight());
         rotateLeft(node);
+    }
+
+    /**
+     * private void balanceNode(AVLNode node)
+     * <p>
+     * Performs balance operations (rotations) on the given node, if needed.
+     * <p>
+     * time complexity: O(1)
+     */
+    private void balanceNode(AVLNode node) { // checks the cases as we learned in class that matches both insertions and deletions
+        if (node.getBalanceFactor() == 2) {
+            if (node.getLeft().getBalanceFactor() == -1) {
+                this.rotateLeftThenRight(node);
+            } else if (node.getLeft().getBalanceFactor() == 1 || node.getLeft().getBalanceFactor() == 0) {
+                this.rotateRight(node);
+            }
+        } else if (node.getBalanceFactor() == -2) {
+            if (node.getRight().getBalanceFactor() == -1 || node.getRight().getBalanceFactor() == 0) {
+                this.rotateLeft(node);
+            } else if (node.getRight().getBalanceFactor() == 1) {
+                this.rotateRightThenLeft(node);
+            }
+        }
+    }
+
+    /**
+     * private boolean isUnbalanced(AVLNode node)
+     * <p>
+     * return true if and only if the node is unbalanced.
+     * <p>
+     * time complexity: O(1)
+     */
+    private boolean isUnbalanced(AVLNode node) {
+        return node.getBalanceFactor() > 1 || node.getBalanceFactor() < -1;
+    }
+
+    /**
+     * protected AVLNode balanceTreeOnce(AVLNode node)
+     * <p>
+     * updates the fields of all the nodes from the bottom of the tree until the first rotation,
+     * or until it reaches the root if no rotation has been performed.
+     * Returns the root if and only if the tree is balanced
+     * and all the nodes are up to date.
+     * <p>
+     * time complexity: O(d) when d is the of length of the path between the given node and the node that needs balancing, or the root if there is no such thing
+     */
+    protected AVLNode balanceTreeOnce(AVLNode node) {
+        while (node.isRealNode()) { // iterates up through the tree to the first unbalanced element, if the tree is balanced we exit the loop and return the virtual node
+            node.updateNodeFields(); // update size, height and subTreeXor of the node in O(1)
+            if (this.isUnbalanced(node)) {
+                this.balanceNode(node);
+                return node.getParent(); // if node is unbalanced, balance it and return it's parent that "took it's place" as a result of the rotation
+            }
+            node = node.getParent();
+        }
+        return this.getVirtualNode();
+    }
+
+    /**
+     * private void replaceChildren(AVLNode oldParent, AVLNode newParent)
+     * <p>
+     * sets the oldParent children to be the newParent children.
+     * <p>
+     * time complexity: O(1)
+     */
+    private void replaceChildren(AVLNode oldParent, AVLNode newParent) {
+        newParent.setRight(oldParent.getRight()); // right child
+        oldParent.getRight().setParent(newParent);
+
+        newParent.setLeft(oldParent.getLeft()); // left child
+        oldParent.getLeft().setParent(newParent);
+    }
+
+    /**
+     * private int balanceTree(AVLNode node)
+     * <p>
+     * performs balancing operations to the root.
+     * returns the number of balancing operations that were performed + 1.
+     * <p>
+     * time complexity: O(log(n)) when n is the number of node in the tree
+     */
+    private int balanceTree(AVLNode node) {
+        int rebalancingOperationsCounter = 0;
+        AVLNode lastUpdatedNode = node;
+        while (lastUpdatedNode.isRealNode()) { // balance to the top until the tree is balanced
+            lastUpdatedNode = this.balanceTreeOnce(lastUpdatedNode);
+            rebalancingOperationsCounter += 1; // for each balance operation it increments the counter, and for the last iteration when the tree is balanced it increments the counter for the insertion itself
+        }
+        return rebalancingOperationsCounter;
+    }
+
+    /**
+     * public int insert(int k, boolean i)
+     * <p>
+     * inserts an item with key k and info i to the AVL tree.
+     * the tree must remain valid (keep its invariants).
+     * returns the number of nodes which require rebalancing operations (i.e. promotions or rotations).
+     * This always includes the newly-created node.
+     * returns -1 if an item with key k already exists in the tree.
+     * <p>
+     * time complexity: O(log(n)) when n is the number of node in the tree
+     */
+    public int insert(int k, boolean i) {
+        if (this.empty()) { // if the tree is empty, initializes it with a new node with key k and info i
+            this.setRoot(new AVLNode(k, i, this.getVirtualNode()));
+            this.setMin(this.getRoot());
+            this.setMax(this.getRoot());
+            this.getRoot().setParent(this.getVirtualNode());
+            return 1;
+        }
+        AVLNode node = searchNode(k); // node is the item with key k in the tree, or the theoretical parent if an item with key k was not found in the tree.
+        if (node.getKey() == k) { // if a node with key k exists, return -1
+            return -1;
+        }
+        AVLNode newNode = new AVLNode(k, i, node);
+        if (node.getKey() > k) {
+            updateRelationsForNewLeftChild(node, newNode);
+        } else {
+            updateRelationsForNewRightChild(node, newNode);
+        }
+
+        AVLNode lastUpdatedNode = this.balanceTreeOnce(node); // balance the tree - as we seen in class, after an insertion at most one balancing operations is needed
+        if (lastUpdatedNode.isRealNode()) { // in other words, if a rotation has been performed,
+            this.balanceTreeOnce(lastUpdatedNode); // continues to update nodes in the path from the inserted node to the root
+            return 2;
+        }
+        return 1;
     }
 
     /**
@@ -509,52 +557,6 @@ public class AVLTree {
         The balance operation also updates the fields of the nodes and counts the number of the rotations.
          */
         return balanceTree(nodeToBeBalancedFrom);
-    }
-
-    /**
-     * private void replaceChildren(AVLNode oldParent, AVLNode newParent)
-     * <p>
-     * sets the oldParent children to be the newParent children.
-     * <p>
-     * time complexity: O(1)
-     */
-    private void replaceChildren(AVLNode oldParent, AVLNode newParent) {
-        newParent.setRight(oldParent.getRight()); // right child
-        oldParent.getRight().setParent(newParent);
-
-        newParent.setLeft(oldParent.getLeft()); // left child
-        oldParent.getLeft().setParent(newParent);
-    }
-
-    /**
-     * private Direction getDirectionFromParent(AVLNode node)
-     * <p>
-     * retrieves the nodes direction from it's parent.
-     * i.e. if the node is the right child the method will return Direction.Right.
-     * if the given node is the root the returned value will be Direction.Right.
-     * <p>
-     * time complexity: O(1)
-     */
-    private Direction getDirectionFromParent(AVLNode node) {
-        return node.isLeftChild() ? Direction.Left : Direction.Right;
-    }
-
-    /**
-     * private int balanceTree(AVLNode node)
-     * <p>
-     * performs balancing operations to the root.
-     * returns the number of balancing operations that were performed + 1.
-     * <p>
-     * time complexity: O(log(n)) when n is the number of node in the tree
-     */
-    private int balanceTree(AVLNode node) {
-        int rebalancingOperationsCounter = 0;
-        AVLNode lastUpdatedNode = node;
-        while (lastUpdatedNode.isRealNode()) { // balance to the top until the tree is balanced
-            lastUpdatedNode = this.balanceTreeOnce(lastUpdatedNode);
-            rebalancingOperationsCounter += 1; // for each balance operation it increments the counter, and for the last iteration when the tree is balanced it increments the counter for the insertion itself
-        }
-        return rebalancingOperationsCounter;
     }
 
     /**
@@ -786,7 +788,8 @@ public class AVLTree {
             }
         }
 
-        //returns left child (if there is no left child return null)
+        //returns left child
+        //if called for virtual node, return value is ignored.
         //time complexity: O(1)
         public AVLNode getLeft() {
             return this.left;
@@ -800,7 +803,8 @@ public class AVLTree {
             }
         }
 
-        //returns right child (if there is no right child return null)
+        //returns right child
+        //if called for virtual node, return value is ignored.
         //time complexity: O(1)
         public AVLNode getRight() {
             return this.right;
@@ -836,7 +840,7 @@ public class AVLTree {
         //returns the parent (if there is no parent return null)
         //time complexity: O(1)
         public AVLNode getParent() {
-            return this.parent;
+            return this.parent.isRealNode() ? this.parent : null;
         }
 
         //sets the height of the node
