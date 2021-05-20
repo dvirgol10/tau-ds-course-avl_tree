@@ -2132,7 +2132,61 @@ public AVLNode getParent()
 \series bold
 מה היא עושה: 
 \series default
-מחזירה את אביו הישיר של הצומת.
+מחזירה את אביו הישיר של הצומת, או
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+null
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+אם לצומת אין אבא.
 \end_layout
 
 \begin_layout Standard
@@ -3276,9 +3330,7 @@ getKey()
 \uwave default
 \noun default
 \color inherit
-ו-
-\lang english
-getParent()
+וגישה לשדה
 \family roman
 \series medium
 \shape up
@@ -3291,7 +3343,6 @@ getParent()
 \uwave off
 \noun off
 \color none
-\lang hebrew
  
 \family default
 \series default
@@ -3737,7 +3788,7 @@ public AVLTree()
 \series bold
 מה הוא עושה: 
 \series default
-ללא מימוש, יוצר אובייקט מטיפוס
+יוצר אובייקט מטיפוס
 \family roman
 \series medium
 \shape up
@@ -3795,6 +3846,35 @@ AVLTree
 \lang english
 insert(int k, boolean i)
 \lang hebrew
+, ומאתחל את הצומת הוירטואלי של העץ בעזרת קריאה לבנאי
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+AVLNode()
+\lang hebrew
 .
 \end_layout
 
@@ -3803,7 +3883,40 @@ insert(int k, boolean i)
 \series bold
 סיבוכיות זמן הריצה:
 \series default
- סיבוכיות זמן הריצה הכוללת היא 
+ ראינו כי 
+\lang english
+AVLNode()
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+מתבצע ב-
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ זמן, לכן סיבוכיות זמן הריצה הכוללת היא 
 \begin_inset Formula $O\left(1\right)$
 \end_inset
 
@@ -5539,7 +5652,7 @@ dir
 \series bold
 סיבוכיות זמן הריצה: 
 \series default
-ישנן מספר קבוע של קריאות לפעולות שהראינו שרצות בסיבוכיות 
+ישנן גישה לשדה ומספר קבוע של קריאות לפעולות שהראינו שרצות בסיבוכיות 
 \begin_inset Formula $O\left(1\right)$
 \end_inset
 
@@ -5574,37 +5687,6 @@ setChildInDir(AVLNode node, Direction dir)
 הפעולה 
 \lang english
 setParent(AVLNode node)
-\end_layout
-
-\begin_layout Itemize
-הפעולה
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
- 
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\xout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-\lang english
-getParent()
 \end_layout
 
 \begin_layout Itemize
@@ -5976,7 +6058,7 @@ getBalanceFactor()
 \begin_layout Subsubsection
 הפעולה 
 \lang english
-protected AVLNode balanceTreeOnce(AVLNode node)
+protected int updateNode(AVLNode node)
 \end_layout
 
 \begin_layout Standard
@@ -5984,19 +6066,107 @@ protected AVLNode balanceTreeOnce(AVLNode node)
 \series bold
 מה היא עושה:
 \series default
- עולה מהצומת המועבר לכיוון השורש.
- אם היא נתקלת בצומת לא מאוזן, מאזנת אותו ומחזירה את אביו.
- אם העץ מאוזן הפעולה תחזיר את הצומת הוירטואלי.
+ מעדכנת את השדות של הצומת לאחר הכנסה/מחיקה.
+ אם הצומת הוא 
+\begin_inset Quotes sld
+\end_inset
+
+עבריין
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+AVL
+\lang hebrew
+
+\begin_inset Quotes srd
+\end_inset
+
+, מאזנת אותו.
+ אם התבצע שינוי גובה/פעולת גלגול, הפעולה מחזירה 
+\begin_inset Formula $1$
+\end_inset
+
+, אחרת מחזירה 
+\begin_inset Formula $0$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 
 \series bold
-סיבוכיות זמן הריצה: 
+כיצד היא פועלת:
 \series default
-הפעולה עולה במסלול ישיר לכיוון השורש, ומבצעת את הפעולות 
+ שומרת את הגובה של הצומת לפני פעולות האיזון, ולאחר שמעדכנת אותו ואת שאר
+ השדות באמצעות הפעולה 
 \lang english
-getParent(), getVirtualNode()
+updateNodeFields()
+\lang hebrew
+, בודקת האם הגובה השתנה או שהצומת הוא 
+\begin_inset Quotes sld
+\end_inset
+
+עבריין
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+\lang english
+AVL
+\lang hebrew
+
+\begin_inset Quotes srd
+\end_inset
+
+.
+ אם התשובה לאחת מהשאלות האלו היא כן, מפעילה על הצומת את הפעולה 
+\lang english
+balanceNode(AVLNode node)
 \family roman
 \series medium
 \shape up
@@ -6023,26 +6193,88 @@ getParent(), getVirtualNode()
 \uwave default
 \noun default
 \color inherit
-וכן בכל איטרציה לכל היותר את הפעולות 
+)אשר מבצעת גלגול אם יש צורך(, ומחזירה 
+\begin_inset Formula $1$
+\end_inset
+
+ שכן התבצעה פעולת איזון.
+ אחרת, מחזירה 
+\begin_inset Formula $0$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+סיבוכיות זמן הריצה: 
+\series default
+מבצעת את הפעולות
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
 \lang english
-isRealNode(), updateNodeFields(), isUnbalanced(AVLNode node), balanceNode(AVLNod
-e node), getParent()
+getHeight(), updateNodeFields(), isUnbalanced(AVLNode node)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang hebrew
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ו-
+\lang english
+balanceNode(AVLNode node)
 \lang hebrew
 , כולן ב-
 \begin_inset Formula $O\left(1\right)$
 \end_inset
 
  זמן.
-\begin_inset Newline newline
-\end_inset
-
-אז עבור 
-\begin_inset Formula $d$
-\end_inset
-
- אורך המסלול לכיוון השורש שהפעולה עברה בו, סך הכל סיבוכיות זמן הריצה היא
- 
-\begin_inset Formula $O\left(d\right)$
+ לכן סיבוכיות זמן הריצה הכוללת היא 
+\begin_inset Formula $O\left(1\right)$
 \end_inset
 
 .
@@ -6307,9 +6539,32 @@ getRight(), setRight(AVLNode node), setParent(AVLNode node), getLeft(),
 \begin_layout Subsubsection
 
 \series bold
-הפעולה 
+הפעולה
+\family roman
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
 \lang english
-private int balanceTree(AVLNode node)
+protected int balanceTree(AVLNode node)
 \end_layout
 
 \begin_layout Standard
@@ -6318,7 +6573,7 @@ private int balanceTree(AVLNode node)
 מה היא עושה:
 \series default
  מאזנת את העץ מהצומת הנתון ועד לשורש, מעדכנת את השדות של הצמתים הרלוונטים
- ובסיום מחזירה את כמות פעולות האיזון )ועוד אחת( שהתבצעו.
+ ובסיום מחזירה את כמות פעולות האיזון שהתבצעו.
 \end_layout
 
 \begin_layout Standard
@@ -6329,7 +6584,7 @@ private int balanceTree(AVLNode node)
  מתחילה מהצומת הנתון וממשיכה לעלות בעץ בלולאה עד שהיא מגיעה לאבא של השורש
  )הצומת הוירטואלי(, כאשר בכל איטרציה קוראת לפעולה 
 \lang english
-balanceTreeOnce(AVLNode node)
+updateNode(AVLNode node)
 \family roman
 \series medium
 \shape up
@@ -6356,69 +6611,19 @@ balanceTreeOnce(AVLNode node)
 \uwave default
 \noun default
 \color inherit
-על מנת לעדכן את השדות המתאימים עד האיזון הבא, ולאזן את עבריין
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
- 
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\xout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-\lang english
-AVL
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang hebrew
- 
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\xout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-הבא.
- כמו כן, בכל איטרציה מגדילה את המונה של פעולות האיזון ב-
-\numeric on
+על מנת לעדכן את השדות המתאימים של כל צומת ולבצע עליהם גלגולים אם יש צורך.
+ כמו כן, בכל איטרציה מוסיפה למונה של פעולות האיזון 
+\begin_inset Formula $0$
+\end_inset
 
+ או 
 \begin_inset Formula $1$
 \end_inset
 
-
-\numeric off
+ בהתאם לערך ההחזרה של 
+\lang english
+updateNode(AVLNode node)
+\lang hebrew
 .
 \end_layout
 
@@ -6429,11 +6634,15 @@ AVL
 \series default
 הראינו כי הפעולה 
 \lang english
-balanceTreeOnce(AVLNode node)
+updateNode(AVLNode node)
 \lang hebrew
- מתבצעת בסיבוכיות לינארית באורך המסלול בין הצומת הנתון אל הצומת המוחזר.
- אנו קוראים בלולאה שוב ושוב לפעולה עם הערך המוחזר עד שאנו מגיעים לשורש,
- כלומר המסלול שאנו מבצעים הוא מסלול מהצומת הנתון אל השורש.
+ מתבצעת ב-
+\begin_inset Formula $O\left(1\right)$
+\end_inset
+
+ זמן.
+ אנו קוראים בלולאה שוב ושוב לפעולה עם כל צומת בנתיב עד שמגיעים לאביו הוירטואלי
+ של השורש, כלומר המסלול שאנו מבצעים הוא מסלול מהצומת הנתון אל השורש.
  מסלול זה חסום בגובה העץ, שהוא 
 \begin_inset Formula $O\left(\log n\right)$
 \end_inset
@@ -6645,7 +6854,7 @@ updateRelationsForNewRightChild(AVLNode parent, AVLNode newNode)
 \color inherit
 ולאחר מכן מאזנת את העץ ומעדכנת את השדות המתאימים בעזרת הפעולה 
 \lang english
-balanceTreeOnce(AVLNode node)
+balanceTree(AVLNode node)
 \family roman
 \series medium
 \shape up
@@ -6659,7 +6868,7 @@ balanceTreeOnce(AVLNode node)
 \noun off
 \color none
 \lang hebrew
- פעם אחת על ידי קריאה יחידה )או שתיים במידה ונדרשה פעולת איזון(.
+.
 \end_layout
 
 \begin_layout Standard
@@ -6838,7 +7047,7 @@ updateRelationsForNewRightChild(AVLNode parent, AVLNode newNode)
 
  זמן וקריאה לפעולה 
 \lang english
-balanceTreeOnce(AVLNode node)
+balanceTree(AVLNode node)
 \family roman
 \series medium
 \shape up
@@ -6865,13 +7074,7 @@ balanceTreeOnce(AVLNode node)
 \uwave default
 \noun default
 \color inherit
-לכל היותר פעמיים, אשר מתבצעת בסיבוכיות זמן לינארית באורך מסלול בין צומת
- לבין צומת אחר במסלולו אל השורש, לכן מתבצעת לכל היותר בסיבוכיות לינארית
- בגובה ה-
-\begin_inset Formula $h$
-\end_inset
-
-, שהוא
+מתבצעת ב-
 \begin_inset Formula $O\left(\log n\right)$
 \end_inset
 
@@ -7046,12 +7249,6 @@ getRight()
 \begin_layout Itemize
 הפעולה 
 \lang english
-getParent()
-\end_layout
-
-\begin_layout Itemize
-הפעולה 
-\lang english
 setParent(AVLNode node)
 \end_layout
 
@@ -7146,12 +7343,6 @@ getLeft()
 \begin_layout Itemize
 הפעולה 
 \lang english
-getParent()
-\end_layout
-
-\begin_layout Itemize
-הפעולה 
-\lang english
 setParent(AVLNode node)
 \end_layout
 
@@ -7223,12 +7414,6 @@ setChildInDir(AVLNode node, Direction dir)
 \begin_layout Itemize
 הפעולה 
 \lang english
-getParent()
-\end_layout
-
-\begin_layout Itemize
-הפעולה 
-\lang english
 getDirectionFromParent(AVLNode node)
 \end_layout
 
@@ -7264,12 +7449,6 @@ getChildCount()
 הפעולה 
 \lang english
 getPredecessor()
-\end_layout
-
-\begin_layout Itemize
-הפעולה 
-\lang english
-getParent()
 \end_layout
 
 \begin_layout Itemize
@@ -7325,12 +7504,6 @@ setRoot(AVLNode root)
 הפעולה 
 \lang english
 getChildCount()
-\end_layout
-
-\begin_layout Itemize
-הפעולה 
-\lang english
-getParent()
 \end_layout
 
 \begin_layout Itemize
@@ -7409,76 +7582,6 @@ balanceTree(AVLNode node)
 \noun default
 \color inherit
 אשר מאזנת את העץ ומעדכנת את השדות המתאימים.
-\end_layout
-
-\begin_layout Standard
-ראינו כי כלל הפעולות והשאילתות מתבצעות בסיבוכיות 
-\begin_inset Formula $O\left(1\right)$
-\end_inset
-
- למעט
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
- 
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\xout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-\lang english
-balanceNode(AVLNode node)
-\family roman
-\series medium
-\shape up
-\size normal
-\emph off
-\bar no
-\strikeout off
-\xout off
-\uuline off
-\uwave off
-\noun off
-\color none
-\lang hebrew
- 
-\family default
-\series default
-\shape default
-\size default
-\emph default
-\bar default
-\strikeout default
-\xout default
-\uuline default
-\uwave default
-\noun default
-\color inherit
-הרצה בסיבוכיות 
-\begin_inset Formula $O\left(\log n\right)$
-\end_inset
-
- לכן הפעולה רצה בסיבוכיות 
-\begin_inset Formula $O\left(\log n\right)$
-\end_inset
-
-.
 \end_layout
 
 \begin_layout Standard
@@ -7615,7 +7718,7 @@ searchNode(int k)
 \begin_inset Formula $O\left(1\right)$
 \end_inset
 
- זמן.
+ זמן, כמו גם גישות לשדה.
 \begin_inset Newline newline
 \end_inset
 

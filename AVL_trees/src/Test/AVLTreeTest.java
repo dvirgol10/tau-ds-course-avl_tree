@@ -43,11 +43,37 @@ class AVLTreeTest {
     public void insert() {
         Assertions.assertEquals(1, tree.insert(1, true));
         isValidTree();
-        Assertions.assertEquals(1, tree.insert(2, false));
+        Assertions.assertEquals(2, tree.insert(2, false));
         isValidTree();
         Assertions.assertEquals(-1, tree.insert(2, false));
         isValidTree();
-        Assertions.assertEquals(2, tree.insert(3, true));
+        Assertions.assertEquals(3, tree.insert(3, true));
+        //insertMany(50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1);
+        resetTree();
+        Assertions.assertEquals(1, tree.insert(50, true));
+        isValidTree();
+        Assertions.assertEquals(2, tree.insert(25, true));
+        isValidTree();
+        Assertions.assertEquals(1, tree.insert(75, true));
+        isValidTree();
+        Assertions.assertEquals(3, tree.insert(10, true));
+        isValidTree();
+        Assertions.assertEquals(1, tree.insert(30, true));
+        isValidTree();
+        Assertions.assertEquals(2, tree.insert(60, true));
+        isValidTree();
+        Assertions.assertEquals(1, tree.insert(80, true));
+        isValidTree();
+        Assertions.assertEquals(4, tree.insert(5, true));
+        isValidTree();
+        Assertions.assertEquals(1, tree.insert(15, true));
+        isValidTree();
+        Assertions.assertEquals(2, tree.insert(27, true));
+        isValidTree();
+        Assertions.assertEquals(3, tree.insert(55, true));
+        isValidTree();
+        Assertions.assertEquals(5, tree.insert(1, true));
+        isValidTree();
     }
 
     private void isValidTree() {
@@ -73,17 +99,17 @@ class AVLTreeTest {
         isValidTree();
         insertMany(4, 2);
         isValidTree();
-        Assertions.assertEquals(2, tree.delete(4));
+        Assertions.assertEquals(1, tree.delete(4));
         isValidTree();
         insertMany(5, 0, 4);
         isValidTree();
-        Assertions.assertEquals(1, tree.delete(1));
+        Assertions.assertEquals(0, tree.delete(1));
         isValidTree();
-        Assertions.assertEquals(2, tree.delete(0));
+        Assertions.assertEquals(1, tree.delete(0));
         resetTree();
         insertMany(50, 25, 75, 10, 30, 60, 80, 5, 15, 27, 55, 1);
         isValidTree();
-        Assertions.assertEquals(3, tree.delete(80));
+        Assertions.assertEquals(2, tree.delete(80));
         isValidTree();
     }
 

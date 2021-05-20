@@ -10,7 +10,7 @@ public class BigTest {
         AVLNode right = rightKey == -1 ? tree.getVirtualNode() : tree.searchNode(rightKey);
         AVLNode successor = tree.searchNode(successorKey);
         AVLNode predecessor = tree.searchNode(predecessorKey);
-        boolean parentKeyBoolean = parentKey == key ? !node.getParent().isRealNode() : node.getParent() == parent;
+        boolean parentKeyBoolean = parentKey == key ? node.getParent() == null : node.getParent() == parent;
         boolean successorKeyBoolean = successorKey == key ? !node.getSuccessor().isRealNode() : node.getSuccessor() == successor;
         boolean predecessorKeyBoolean = predecessorKey == key ? !node.getPredecessor().isRealNode() : node.getPredecessor() == predecessor;
 
