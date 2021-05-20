@@ -77,25 +77,6 @@ public class Measurements {
         return intArr;
     }
 
-    /*
-    public void inOrderArray(int[] arithmeticProgressionArr, int offset, int[] arr) {
-        if (node.isRealNode()) {
-            inOrder(node.getLeft(), offset, arr);
-            arr[offset + node.getLeft().getSize()] = node; // assigns the node in the right position in the in-order array
-            inOrder(node.getRight(), offset + node.getLeft().getSize() + 1, arr);
-        }
-    }
-    */
-
-    /*
-    private static int[] balancedSeriesArray(int size){
-        int[] intArr = new int[size];
-        for (int i = 0; i < intArr.length; i++) {
-            intArr[i] = i + 1;
-        }
-        return intArr;
-    }
-    */
     private static int[] balancedSeriesArray(int i) {
         return Arrays.copyOfRange(envBalancedSeriesArray(minimalPowerOf2(i)),0, i);
     }
@@ -178,6 +159,10 @@ public class Measurements {
     }
 
     public static void main(String[] args) {
+        comparePrefixXor(); //neutralize external noises
+        for (int i = 0; i < 100; i++) {
+            System.out.println("\n");
+        }
         comparePrefixXor();
         compareInsert();
     }

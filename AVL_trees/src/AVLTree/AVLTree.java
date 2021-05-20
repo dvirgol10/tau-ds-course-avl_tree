@@ -427,7 +427,7 @@ public class AVLTree {
     }
 
     /**
-     * public int insert(int k, boolean i)
+     * protected void updateSuccessor(AVLNode node, AVLNode newNode)
      * <p>
      * inserts an item with key k and info i to the AVL tree.
      * the tree must remain valid (keep its invariants).
@@ -534,6 +534,8 @@ public class AVLTree {
                 node.parent.setChildInDir(pre, getDirectionFromParent(node));
 
                 replaceChildren(node, pre);
+
+                pre.updateNodeFields();
 
                 if (this.getRoot() == node) { // if the node is the root, the new root will be his predecessor
                     this.setRoot(pre);

@@ -95,7 +95,7 @@ class AVLTreeTest {
         isValidTree();
         Assertions.assertEquals(-1, tree.delete(4));
         isValidTree();
-        Assertions.assertEquals(1, tree.delete(2));
+        Assertions.assertEquals(0, tree.delete(2));
         isValidTree();
         insertMany(4, 2);
         isValidTree();
