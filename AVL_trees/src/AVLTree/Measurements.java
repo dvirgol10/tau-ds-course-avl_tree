@@ -159,11 +159,15 @@ public class Measurements {
     }
 
     public static void main(String[] args) {
-        comparePrefixXor(); //neutralize external noises
+//        comparePrefixXor(); //neutralize external noises
+//        for (int i = 0; i < 100; i++) {
+//            System.out.println("\n");
+//        }
+//        comparePrefixXor();
+        compareInsert();
         for (int i = 0; i < 100; i++) {
             System.out.println("\n");
         }
-        comparePrefixXor();
         compareInsert();
     }
 

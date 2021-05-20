@@ -486,7 +486,7 @@ public class AVLTree {
             this.setRoot(null);
             this.setMin(null);
             this.setMax(null);
-            return 1;
+            return 0;
         } else if (this.getMin() == node) { // the node to delete is the min element
             this.setMin(node.getSuccessor());
             node.getRight().setParent(node.parent);
